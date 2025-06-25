@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.2)',
-        borderRadius: 70,
+        borderRadius: 50,
         width: '80%',
     },
     logo: {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     guestButton: {
         padding: 15,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: 25,
+        borderRadius: 15,
         width: '70%',
     },
     guestButtonText: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         padding: 15,
         backgroundColor: '#fff',
-        borderRadius: 25,
+        borderRadius: 15,
         width: '70%',
     },
     googleButtonText: {

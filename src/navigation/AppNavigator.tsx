@@ -7,6 +7,7 @@ import BackgroundWrapper from '../presentation/components/BackgroundWrapper';
 import LoginScreen from '../presentation/screen/auth/LoginScreen';
 import RoomChoiceScreen from '../presentation/screen/auth/RoomChoiceScreen';
 import CreateRoomScreen from '../presentation/screen/room/CreateRoomScreen';
+import JoinRoomScreen from '../presentation/screen/room/JoinRoomScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -18,6 +19,7 @@ const AppNavigator = () => {
                 <Stack.Screen name="Login" children={() => (<BackgroundWrapper><LoginScreen /></BackgroundWrapper>)} />
                 <Stack.Screen name="RoomChoice" children={() => (<BackgroundWrapper><RoomChoiceScreen /></BackgroundWrapper>)} />
                 <Stack.Screen name="CreateRoom" children={() => (<BackgroundWrapper><CreateRoomScreen /></BackgroundWrapper>)} />
+                <Stack.Screen name="JoinRoom" children={() => (<BackgroundWrapper><JoinRoomScreen /></BackgroundWrapper>)} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     input: {
         width: '80%',
         height: 50,
-        borderRadius: 25,
+        borderRadius: 15,
         backgroundColor: '#fff',
         color: '#4A0E72',
         padding: 10,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     guestButton: {
         padding: 15,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: 25,
+        borderRadius: 15,
         width: '70%',
     },
     guestButtonText: {
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     button: {
         padding: 15,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: 25,
+        borderRadius: 15,
         width: '80%',
     },
     buttonText: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     toggleContainer: {
         flexDirection: 'row',
         backgroundColor: '#fff',
-        borderRadius: 30,
+        borderRadius: 15,
         padding: 4,
         marginBottom: 30,
         width: '80%',
@@ -103,13 +103,13 @@ const styles = StyleSheet.create({
     toggleOption: {
         flex: 1,
         paddingVertical: 10,
-        borderRadius: 25,
+        borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
     },
     toggleOptionSelected: {
         backgroundColor: '#4A0E72',
-        borderRadius: 25,
+        borderRadius: 15,
     },      
     toggleText: {
         color: '#4A0E72',
