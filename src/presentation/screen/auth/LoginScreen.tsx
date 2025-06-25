@@ -11,10 +11,10 @@ const LoginScreen = () => {
         <View style={styles.container}>
             <View style={styles.outerContainer}>
                 <Image source={require('../../../../assets/icons/playzio_logo.png')} style={styles.logo} />
-                <TouchableOpacity style={styles.guestButton} onPress={() => navigation.navigate('RoomChoice')}>
+                <TouchableOpacity style={styles.guestButton} onPress={() => navigation.navigate('Username')}>
                     <Text style={styles.guestButtonText}>Play as guest</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.googleButton}>
+                <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('RoomChoice')}>
                     <Text style={styles.googleButtonText}>Continue with Google</Text>
                 </TouchableOpacity>
             </View>
