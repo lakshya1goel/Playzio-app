@@ -5,6 +5,7 @@ import { RootStackParamList } from '../type';
 import SplashScreen from '../presentation/screen/auth/SplashScreen';
 import BackgroundWrapper from '../presentation/components/BackgroundWrapper';
 import LoginScreen from '../presentation/screen/auth/LoginScreen';
+import RoomChoiceScreen from '../presentation/screen/auth/RoomChoiceScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -14,6 +15,7 @@ const AppNavigator = () => {
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Splash" children={() => (<BackgroundWrapper><SplashScreen /></BackgroundWrapper>)} />
                 <Stack.Screen name="Login" children={() => (<BackgroundWrapper><LoginScreen /></BackgroundWrapper>)} />
+                <Stack.Screen name="RoomChoice" children={() => (<BackgroundWrapper><RoomChoiceScreen /></BackgroundWrapper>)} />
             </Stack.Navigator>
         </NavigationContainer>
     );

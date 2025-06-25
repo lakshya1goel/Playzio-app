@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   logo: {
-    width: 200,
+    width: 250,
     height: 200,
   },
 });
