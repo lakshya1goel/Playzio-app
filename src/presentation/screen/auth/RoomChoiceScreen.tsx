@@ -1,17 +1,21 @@
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-gesture-handler';
+import { RootStackParamList } from '../../../type';
 
 const RoomChoiceScreen = () => {
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
     return (
         <View style={styles.container}>
             <View style={styles.outerContainer}>
                 <Image source={require('../../../../assets/icons/playzio_logo.png')} style={styles.logo} />
-                <Text style={styles.welcomeText}>Welcome to the Playzio!</Text>
-                <TouchableOpacity style={styles.guestButton}>
+                <Text style={styles.headerText}>Welcome to the Playzio!</Text>
+                <TouchableOpacity style={styles.guestButton} onPress={() => navigation.navigate('CreateRoom')}>
                     <Text style={styles.guestButtonText}>Create Room</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.googleButton}>
+                <TouchableOpacity style={styles.googleButton} onPress={() => navigation.navigate('JoinRoom')}>
                     <Text style={styles.googleButtonText}>Join Room</Text>
                 </TouchableOpacity>
             </View>
@@ -31,7 +35,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.2)',
-        borderRadius: 70,
+        borderRadius: 50,
         width: '80%',
     },
     logo: {
@@ -42,7 +46,7 @@ const styles = StyleSheet.create({
     guestButton: {
         padding: 15,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: 25,
+        borderRadius: 15,
         width: '70%',
     },
     guestButtonText: {
@@ -55,7 +59,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         padding: 15,
         backgroundColor: '#fff',
-        borderRadius: 25,
+        borderRadius: 15,
         width: '70%',
     },
     googleButtonText: {
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
-    welcomeText: {
+    headerText: {
         marginBottom: 40,
         color: '#fff',
         textAlign: 'center',
