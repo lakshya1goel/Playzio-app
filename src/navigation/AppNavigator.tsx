@@ -9,6 +9,7 @@ import RoomChoiceScreen from '../presentation/screen/auth/RoomChoiceScreen';
 import CreateRoomScreen from '../presentation/screen/room/CreateRoomScreen';
 import JoinRoomScreen from '../presentation/screen/room/JoinRoomScreen';
 import UsernameScreen from '../presentation/screen/auth/UsernameScreen';
+import GameScreen from '../presentation/screen/game/GameScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -22,6 +23,7 @@ const AppNavigator = () => {
                 <Stack.Screen name="RoomChoice" children={() => (<BackgroundWrapper><RoomChoiceScreen /></BackgroundWrapper>)} />
                 <Stack.Screen name="CreateRoom" children={() => (<BackgroundWrapper><CreateRoomScreen /></BackgroundWrapper>)} />
                 <Stack.Screen name="JoinRoom" children={() => (<BackgroundWrapper><JoinRoomScreen /></BackgroundWrapper>)} />
+                <Stack.Screen name="Game" children={() => (<BackgroundWrapper><GameScreen /></BackgroundWrapper>)} />
             </Stack.Navigator>
         </NavigationContainer>
     );
