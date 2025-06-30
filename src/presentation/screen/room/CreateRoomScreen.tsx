@@ -25,7 +25,7 @@ const CreateRoomScreen = () => {
                     <Text style={[styles.toggleText, selectedPrivacy === 'private' && styles.toggleTextSelected]}>Private</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Game')}>
                 <Text style={styles.buttonText}>Create Room</Text>
             </TouchableOpacity>
         </View>

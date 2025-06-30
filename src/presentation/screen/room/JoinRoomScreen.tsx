@@ -13,7 +13,7 @@ const JoinRoomScreen = () => {
             <Text style={styles.headerText}>Join a Room</Text>
             <Text style={styles.titleText}>Enter Room Code</Text>
             <TextInput style={styles.input} placeholder="Room Code" placeholderTextColor="#4A0E72" />
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Game')}>
                 <Text style={styles.buttonText}>Join Room</Text>
             </TouchableOpacity>
             <View style={styles.orContainer}>

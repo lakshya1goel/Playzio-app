@@ -5,4 +5,5 @@ export type RootStackParamList = {
     RoomChoice: undefined;
     CreateRoom: undefined;
     JoinRoom: undefined;
+    Game: undefined;
 };
