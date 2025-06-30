@@ -5,13 +5,14 @@ import { Text, TextInput } from 'react-native-gesture-handler';
 import { RootStackParamList } from '../../../type';
 import ChatComponent from '../../components/ChatComponent';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import GameComponent from '../../components/GameComponent';
 
 const GameScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text>GameScreen</Text>
+            <GameComponent />
             <ChatComponent />
         </SafeAreaView>
     );  
