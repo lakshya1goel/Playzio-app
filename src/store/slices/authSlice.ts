@@ -7,7 +7,7 @@ export const loginAsGuest = createAsyncThunk<GuestLoginResponse, string, { rejec
     'auth/loginAsGuest',
     async (name, { rejectWithValue }) => {
         try {
-            const response = await api.post<GuestLoginResponse>(`auth/guest?name=${encodeURIComponent(name)}`);
+            const response = await api.post<GuestLoginResponse>(`auth/guest?name=${encodeURIComponent(name)}`, null);
             if (response.data.success) {
                 console.log(response.data);
                 return response.data;
@@ -33,6 +33,7 @@ const initialState: AuthState = {
     token: null,
     loading: false,
     error: null,
+    isLoggedIn: false,
 };
 
 export const authSlice = createSlice({
@@ -51,6 +52,7 @@ export const authSlice = createSlice({
             state.name = action.payload.data.name;
             state.token = action.payload.data.token;
             state.loading = false;
+            state.isLoggedIn = true;
         }).addCase(loginAsGuest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || 'Guest login failed';
