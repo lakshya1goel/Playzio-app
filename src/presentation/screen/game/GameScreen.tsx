@@ -2,9 +2,9 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { RootStackParamList } from '@type';
-import ChatComponent from '@components/ChatComponent';
+import ChatComponent from '@/presentation/component/chatComponent/ChatComponent';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import GameComponent from '@components/GameComponent';
+import GameComponent from '@/presentation/component/gameComponent/GameComponent';
 
 const GameScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();

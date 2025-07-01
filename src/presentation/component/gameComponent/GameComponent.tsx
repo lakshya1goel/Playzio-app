@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import player1 from '@assets/images/player1.png';
 import player2 from '@assets/images/player2.png';
 import player3 from '@assets/images/player3.png';
@@ -11,12 +11,7 @@ import player8 from '@assets/images/player8.jpeg';
 import player9 from '@assets/images/player9.jpeg';
 import player10 from '@assets/images/player10.png';
 import bomb from '@assets/images/bomb.png';
-
-const PLAYER_SIZE = 50;
-const CENTER_SIZE = 80;
-const RADIUS = 130;
-const CENTER_X = 180;
-const CENTER_Y = 120;
+import { gameComponentStyles, PLAYER_SIZE, CENTER_SIZE, RADIUS, CENTER_X, CENTER_Y } from './GameComponent.styles';
 
 const players = [
     { name: 'Player 1', lives: 3, image: player1 },
@@ -40,7 +35,7 @@ const PlayerCircle = ({ player, idx, total }: { player: any, idx: number, total:
         <View
             key={player.name}
             style={[
-                styles.playerCircleContainer,
+                gameComponentStyles.playerCircleContainer,
                 {
                     left: x,
                     top: y,
@@ -49,11 +44,11 @@ const PlayerCircle = ({ player, idx, total }: { player: any, idx: number, total:
                 },
             ]}
         >
-            <Text style={styles.playerName}>{player.name}</Text>
-            <View style={styles.avatarContainer}>
+            <Text style={gameComponentStyles.playerName}>{player.name}</Text>
+            <View style={gameComponentStyles.avatarContainer}>
                 <Image
                     source={player.image}
-                    style={styles.avatar}
+                    style={gameComponentStyles.avatar}
                 />
             </View>
         </View>
@@ -63,7 +58,7 @@ const PlayerCircle = ({ player, idx, total }: { player: any, idx: number, total:
 const CenterCircle = () => (
     <View
         style={[
-            styles.centerCircleContainer,
+            gameComponentStyles.centerCircleContainer,
             {
                 left: CENTER_X - CENTER_SIZE / 2,
                 top: CENTER_Y - CENTER_SIZE / 2,
@@ -74,17 +69,17 @@ const CenterCircle = () => (
     >
         <Image
             source={bomb}
-            style={styles.centerCircleImage}
+            style={gameComponentStyles.centerCircleImage}
             resizeMode="cover"
         />
-        <Text style={styles.centerCircleText}>Center</Text>
+        <Text style={gameComponentStyles.centerCircleText}>Center</Text>
     </View>
 );
 
 const GameComponent = () => {
     return (
-        <View style={[styles.outerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-            <View style={styles.boardContainer}>
+        <View style={[gameComponentStyles.outerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+            <View style={gameComponentStyles.boardContainer}>
                 <CenterCircle />
                 {players.map((player, idx) => (
                     <PlayerCircle key={player.name} player={player} idx={idx} total={players.length} />
@@ -93,64 +88,5 @@ const GameComponent = () => {
         </View>
     );  
 };
-
-const styles = StyleSheet.create({
-    outerContainer: {
-        alignItems: 'center',
-        backgroundColor: 'transparent',
-        width: '100%',
-        height: '55%',
-    },
-    boardContainer: {
-        width: 360,
-        height: 240,
-        position: 'relative',
-    },
-    playerCircleContainer: {
-        position: 'absolute',
-        alignItems: 'center',
-    },
-    playerName: {
-        color: '#fff',
-        fontSize: 12,
-        textAlign: 'center',
-        marginBottom: 2,
-        marginTop: 0,
-    },
-    avatarContainer: {
-        width: PLAYER_SIZE,
-        height: PLAYER_SIZE,
-        borderRadius: PLAYER_SIZE / 2,
-        backgroundColor: '#4A0E72',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#fff',
-        overflow: 'hidden',
-    },
-    avatar: {
-        width: PLAYER_SIZE - 8,
-        height: PLAYER_SIZE - 8,
-        borderRadius: (PLAYER_SIZE - 8) / 2,
-        resizeMode: 'cover',
-    },
-    centerCircleContainer: {
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 2,
-        backgroundColor: 'transparent',
-    },
-    centerCircleImage: {
-        width: CENTER_SIZE,
-        height: CENTER_SIZE,
-    },
-    centerCircleText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 18,
-        zIndex: 1,
-    },
-});
 
 export default GameComponent;

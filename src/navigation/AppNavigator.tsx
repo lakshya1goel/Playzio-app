@@ -6,8 +6,8 @@ import SplashScreen from '@screens/auth/splash/SplashScreen';
 import BackgroundWrapper from '@components/BackgroundWrapper';
 import LoginScreen from '@screens/auth/login/LoginScreen';
 import RoomChoiceScreen from '@screens/auth/roomChoice/RoomChoiceScreen';
-import CreateRoomScreen from '@screens/room/CreateRoomScreen';
-import JoinRoomScreen from '@screens/room/JoinRoomScreen';
+import CreateRoomScreen from '@/presentation/screen/room/createRoom/CreateRoomScreen';
+import JoinRoomScreen from '@/presentation/screen/room/joinRoom/JoinRoomScreen';
 import UsernameScreen from '@screens/auth/username/UsernameScreen';
 import GameScreen from '@screens/game/GameScreen';
 
