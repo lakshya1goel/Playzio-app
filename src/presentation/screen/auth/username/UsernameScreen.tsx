@@ -14,7 +14,7 @@ const UsernameScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const [name, setName] = useState('');
-    const { loading, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
+    const { loading, error, isLoggedIn, token } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         if (error) {
@@ -24,8 +24,21 @@ const UsernameScreen = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setName('');
-            navigation.navigate('RoomChoice');
+            const saveToken = async () => {
+                try {
+                    const accessExpTime = new Date();
+                    accessExpTime.setDate(accessExpTime.getDate() + 1);
+                    await AuthService.storeToken({
+                        accessToken: token,
+                        accessExpTime: accessExpTime.getTime(),
+                    });
+                    setName('');
+                    navigation.navigate('RoomChoice');
+                } catch (error) {
+                    showErrorMessage('Failed to save authentication token');
+                }
+            };
+            saveToken();
         }
     }, [isLoggedIn, navigation]);
 

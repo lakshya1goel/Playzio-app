@@ -19,3 +19,10 @@ export interface GuestLoginResponse {
         name: string;
     }
 }
+
+export interface User {
+    ID: number;
+    name: string;
+    email: string;
+    profile_pic: string;
+}
