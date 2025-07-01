@@ -2,14 +2,15 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
-import { RootStackParamList } from '../../../type';
+import { RootStackParamList } from '@type';
+import playzioLogo from '@assets/icons/playzio_logo.png';
 
 const JoinRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     return (
         <View style={styles.container}>
-            <Image source={require('../../../../assets/icons/playzio_logo.png')} style={styles.logo} />
+            <Image source={playzioLogo} style={styles.logo} />
             <Text style={styles.headerText}>Join a Room</Text>
             <Text style={styles.titleText}>Enter Room Code</Text>
             <TextInput style={styles.input} placeholder="Room Code" placeholderTextColor="#4A0E72" />

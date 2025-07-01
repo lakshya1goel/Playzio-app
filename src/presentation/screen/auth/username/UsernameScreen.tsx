@@ -1,16 +1,17 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Image, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from 'react-native-gesture-handler';
-import { RootStackParamList } from '../../../../type';
+import { RootStackParamList } from '@type';
 import { usernameScreenStyles } from './UsernameScreen.styles';
+import playzioLogo from '@assets/icons/playzio_logo.png';
 
 const UsernameScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     return (
         <View style={usernameScreenStyles.container}>
-            <Image source={require('../../../../../assets/icons/playzio_logo.png')} style={usernameScreenStyles.logo} />
+            <Image source={playzioLogo} style={usernameScreenStyles.logo} />
             <Text style={usernameScreenStyles.headerText}>Enter Your Username</Text>
             <Text style={usernameScreenStyles.titleText}>Username</Text>
             <TextInput style={usernameScreenStyles.input} placeholder="Username" placeholderTextColor="#4A0E72" />

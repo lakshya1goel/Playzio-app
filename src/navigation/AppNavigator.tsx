@@ -1,15 +1,15 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { RootStackParamList } from '../type';
-import SplashScreen from '../presentation/screen/auth/splash/SplashScreen';
-import BackgroundWrapper from '../presentation/components/BackgroundWrapper';
-import LoginScreen from '../presentation/screen/auth/login/LoginScreen';
-import RoomChoiceScreen from '../presentation/screen/auth/roomChoice/RoomChoiceScreen';
-import CreateRoomScreen from '../presentation/screen/room/CreateRoomScreen';
-import JoinRoomScreen from '../presentation/screen/room/JoinRoomScreen';
-import UsernameScreen from '../presentation/screen/auth/username/UsernameScreen';
-import GameScreen from '../presentation/screen/game/GameScreen';
+import { RootStackParamList } from '@type';
+import SplashScreen from '@screens/auth/splash/SplashScreen';
+import BackgroundWrapper from '@components/BackgroundWrapper';
+import LoginScreen from '@screens/auth/login/LoginScreen';
+import RoomChoiceScreen from '@screens/auth/roomChoice/RoomChoiceScreen';
+import CreateRoomScreen from '@screens/room/CreateRoomScreen';
+import JoinRoomScreen from '@screens/room/JoinRoomScreen';
+import UsernameScreen from '@screens/auth/username/UsernameScreen';
+import GameScreen from '@screens/game/GameScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 

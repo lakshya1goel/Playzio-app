@@ -2,7 +2,8 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from 'react-native-gesture-handler';
-import { RootStackParamList } from '../../../type';
+import { RootStackParamList } from '@type';
+import playzioLogo from '@assets/icons/playzio_logo.png';
 
 const CreateRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -10,7 +11,7 @@ const CreateRoomScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Image source={require('../../../../assets/icons/playzio_logo.png')} style={styles.logo} />
+            <Image source={playzioLogo} style={styles.logo} />
             <Text style={styles.headerText}>Create Your Room</Text>
             <Text style={styles.titleText}>Room Name</Text>
             <TextInput style={styles.input} placeholder="Room Name" placeholderTextColor="#4A0E72" />

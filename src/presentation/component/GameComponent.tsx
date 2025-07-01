@@ -1,5 +1,16 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text } from 'react-native';
+import player1 from '@assets/images/player1.png';
+import player2 from '@assets/images/player2.png';
+import player3 from '@assets/images/player3.png';
+import player4 from '@assets/images/player4.png';
+import player5 from '@assets/images/player5.png';
+import player6 from '@assets/images/player6.png';
+import player7 from '@assets/images/player7.png';
+import player8 from '@assets/images/player8.jpeg';
+import player9 from '@assets/images/player9.jpeg';
+import player10 from '@assets/images/player10.png';
+import bomb from '@assets/images/bomb.png';
 
 const PLAYER_SIZE = 50;
 const CENTER_SIZE = 80;
@@ -8,16 +19,16 @@ const CENTER_X = 180;
 const CENTER_Y = 120;
 
 const players = [
-    { name: 'Player 1', lives: 3, image: require('../../../assets/images/player1.png') },
-    { name: 'Player 2', lives: 3, image: require('../../../assets/images/player2.png') },
-    { name: 'Player 3', lives: 3, image: require('../../../assets/images/player3.png') },
-    { name: 'Player 4', lives: 3, image: require('../../../assets/images/player4.png') },
-    { name: 'Player 5', lives: 3, image: require('../../../assets/images/player5.png') },
-    { name: 'Player 6', lives: 3, image: require('../../../assets/images/player6.png') }, 
-    { name: 'Player 7', lives: 3, image: require('../../../assets/images/player7.png') },
-    { name: 'Player 8', lives: 3, image: require('../../../assets/images/player8.jpeg') },
-    { name: 'Player 9', lives: 3, image: require('../../../assets/images/player9.jpeg') },
-    { name: 'Player 10', image: require('../../../assets/images/player10.png') },
+    { name: 'Player 1', lives: 3, image: player1 },
+    { name: 'Player 2', lives: 3, image: player2 },
+    { name: 'Player 3', lives: 3, image: player3 },
+    { name: 'Player 4', lives: 3, image: player4 },
+    { name: 'Player 5', lives: 3, image: player5 },
+    { name: 'Player 6', lives: 3, image: player6 }, 
+    { name: 'Player 7', lives: 3, image: player7 },
+    { name: 'Player 8', lives: 3, image: player8 },
+    { name: 'Player 9', lives: 3, image: player9 },
+    { name: 'Player 10', lives: 3, image: player10 },
 ];
 
 const PlayerCircle = ({ player, idx, total }: { player: any, idx: number, total: number }) => {
@@ -62,7 +73,7 @@ const CenterCircle = () => (
         ]}
     >
         <Image
-            source={require('../../../assets/images/bomb.png')}
+            source={bomb}
             style={styles.centerCircleImage}
             resizeMode="cover"
         />

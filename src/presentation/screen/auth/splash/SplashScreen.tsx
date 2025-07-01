@@ -1,8 +1,9 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { StyleSheet, Image, View } from 'react-native';
-import { RootStackParamList } from '../../../../type';
+import { Image, View } from 'react-native';
+import { RootStackParamList } from '@type';
 import { splashScreenStyles } from './SplashScreen.styles';
+import playzioLogo from '@assets/icons/playzio_logo.png';
 
 const SplashScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -17,7 +18,7 @@ const SplashScreen = () => {
 
   return (
     <View style={splashScreenStyles.container}>
-      <Image source={require('../../../../../assets/icons/playzio_logo.png')} style={splashScreenStyles.logo} />
+      <Image source={playzioLogo} style={splashScreenStyles.logo} />
     </View>
   );
 };

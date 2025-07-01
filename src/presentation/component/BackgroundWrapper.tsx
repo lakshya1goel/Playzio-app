@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImageBackground, StyleSheet } from 'react-native';
+import backgroundImage from '@assets/images/background.png';
 
 type Props = {
     children: React.ReactNode;
@@ -8,7 +9,7 @@ type Props = {
 const BackgroundWrapper = ({ children }: Props) => {
     return (
         <ImageBackground
-            source={require('../../../assets/images/background.png')}
+            source={backgroundImage}
             style={styles.background}
             resizeMode="cover"
         >
