@@ -1,0 +1,39 @@
+import { User } from "./auth";
+
+export interface RoomState {
+    room: Room | null;
+    loading: boolean;
+    error: string | null;
+    success: boolean;
+}
+
+export interface CreateRoomRequest {
+    name: string;
+    type: string;
+}
+
+export interface CreateRoomResponse {
+    success: boolean;
+    message: string;
+    data: Room;
+}
+
+export interface Room {
+    ID: number;
+    name: string;
+    type: string;
+    created_by: number;
+    join_code: string;
+    creator_guest_id: string;
+    members: Member[];
+}
+
+export interface Member {
+    ID: number;
+    room_id: number;
+    user_id: number;
+    user: User;
+    guest_id: string;
+    guest_name: string;
+    is_creator: boolean;
+}
