@@ -5,9 +5,12 @@ import { Text, TextInput } from 'react-native-gesture-handler';
 import { RootStackParamList } from '@type';
 import { usernameScreenStyles } from './UsernameScreen.styles';
 import playzioLogo from '@assets/icons/playzio_logo.png';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
 
 const UsernameScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const dispatch = useDispatch<AppDispatch>();
 
     return (
         <View style={usernameScreenStyles.container}>
