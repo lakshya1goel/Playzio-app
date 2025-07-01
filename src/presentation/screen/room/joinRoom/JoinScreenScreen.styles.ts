@@ -1,46 +1,6 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
-import { RootStackParamList } from '../../../type';
+import { StyleSheet } from "react-native";
 
-const JoinRoomScreen = () => {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
-    return (
-        <View style={styles.container}>
-            <Image source={require('../../../../assets/icons/playzio_logo.png')} style={styles.logo} />
-            <Text style={styles.headerText}>Join a Room</Text>
-            <Text style={styles.titleText}>Enter Room Code</Text>
-            <TextInput style={styles.input} placeholder="Room Code" placeholderTextColor="#4A0E72" />
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Game')}>
-                <Text style={styles.buttonText}>Join Room</Text>
-            </TouchableOpacity>
-            <View style={styles.orContainer}>
-                <View style={styles.orLine} />
-                <Text style={styles.orText}>OR</Text>
-                <View style={styles.orLine} />
-            </View>
-            <View style={styles.outerContainer}>
-            <FlatList
-                data={['Room 1', 'Room 2', 'Room 3', 'Room 4', 'Room 5', 'Room 6', 'Room 7', 'Room 8', 'Room 9', 'Room 10']}
-                renderItem={({ item }) => (
-                    <View style={styles.itemContainer}>
-                        <Text style={styles.itemText}>{item}</Text>
-                        <TouchableOpacity style={styles.joinButton}>
-                            <Text style={styles.joinButtonText}>Join</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-                showsVerticalScrollIndicator={false}
-            />
-            </View>
-        </View>
-    );  
-};
-
-const styles = StyleSheet.create({
+export const joinRoomScreenStyles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -148,5 +108,3 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 });
-
-export default JoinRoomScreen;
