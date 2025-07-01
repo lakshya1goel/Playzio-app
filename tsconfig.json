@@ -7,7 +7,9 @@
       "@components/*": ["./src/presentation/component/*"],
       "@screens/*": ["./src/presentation/screen/*"],
       "@navigation/*": ["./src/navigation/*"],
-      "@type": ["./src/type.ts"]
+      "@type": ["./src/type.ts"],
+      "@store": ["./src/store/index.ts"],
+      "@service": ["./src/service/*"]
     }
   }
 }

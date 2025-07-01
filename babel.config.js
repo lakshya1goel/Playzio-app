@@ -12,7 +12,17 @@ module.exports = {
           '@screens': './src/presentation/screen',
           '@navigation': './src/navigation',
           '@type': './src/type.ts',
+          '@store': './src/store',
+          '@service': './src/service',
         },
+      },
+    ],
+    [
+      'module:react-native-dotenv', 
+      {
+        'envName': 'APP_ENV',
+        'moduleName': '@env',
+        'path': '.env',
       },
     ],
   ],
