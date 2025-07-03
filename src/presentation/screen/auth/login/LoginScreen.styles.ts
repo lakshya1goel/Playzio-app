@@ -39,6 +39,16 @@ export const loginScreenStyles = StyleSheet.create({
         borderRadius: 15,
         width: '70%',
     },
+    rowStyle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    googleButtonImage: {
+        width: 24,
+        height: 24,
+        marginRight: 8,
+    },
     googleButtonText: {
         color: '#000',
         textAlign: 'center',

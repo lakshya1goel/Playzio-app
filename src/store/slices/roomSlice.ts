@@ -1,8 +1,8 @@
-import api from "@/service/apiService";
+import api from "@/service/ApiService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import { CreateRoomRequest, CreateRoomResponse, RoomState } from "../types/room";
-import authService from "@/service/authService";
+import authService from "@/service/AuthService";
 
 api.interceptors.request.use(
     async (config) => {
