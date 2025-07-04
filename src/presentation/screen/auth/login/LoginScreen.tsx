@@ -48,6 +48,7 @@ const LoginScreen = () => {
                         refreshToken: refresh_token || '',
                         accessExpTime: accessExpTime.getTime(),
                         refreshExpTime: refreshExpTime.getTime(),
+                        userType: 'google'
                     });
                     navigation.replace('RoomChoice');
                 } catch (error) {

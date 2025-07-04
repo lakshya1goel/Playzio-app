@@ -36,3 +36,12 @@ export interface User {
     refresh_token: string;
     refresh_token_exp: number;
 }
+
+export interface GetAccessTokenFromRefreshTokenResponse {
+    success: boolean;
+    message: string;
+    data: {
+        access_token: string;
+        access_token_exp: number;
+    }
+}

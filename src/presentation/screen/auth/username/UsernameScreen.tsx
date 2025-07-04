@@ -10,12 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@store';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { loginAsGuest } from '@/store/slices/authSlice';
+import AuthService from '@/service/AuthService';
 
 const UsernameScreen = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const [name, setName] = useState('');
-    const { loading, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
+    const { loading, error, isLoggedIn, token } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         if (error) {
@@ -25,10 +26,28 @@ const UsernameScreen = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setName('');
-            navigation.replace('RoomChoice');
+            const saveTokens = async () => {
+                try {
+                    const accessExpTime = new Date();
+                    accessExpTime.setDate(accessExpTime.getDate() + 1);
+                    const refreshExpTime = new Date();
+                    refreshExpTime.setDate(refreshExpTime.getDate() + 30);
+                    await AuthService.storeToken({
+                        accessToken: token || '',
+                        refreshToken: token || '',
+                        accessExpTime: accessExpTime.getTime(),
+                        refreshExpTime: refreshExpTime.getTime(),
+                        userType: 'guest'
+                    });
+                    setName('');
+                    navigation.replace('RoomChoice');
+                } catch (error) {
+                    showErrorMessage('Failed to save authentication tokens');
+                }
+            };
+            saveTokens();
         }
-    }, [isLoggedIn, navigation]);
+    }, [isLoggedIn, navigation, token]);
 
     const validateUsername = (): boolean => {
         if (!name) {

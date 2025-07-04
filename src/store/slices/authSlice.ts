@@ -1,13 +1,14 @@
 import api from "@/service/ApiService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import { AuthState, GoogleLoginResponse, GuestLoginResponse } from "../types/auth";
+import { AuthState, GetAccessTokenFromRefreshTokenResponse, GoogleLoginResponse, GuestLoginResponse } from "../types/auth";
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 export const loginAsGuest = createAsyncThunk<GuestLoginResponse, string, { rejectValue: string }>(
     'auth/loginAsGuest',
     async (name, { rejectWithValue }) => {
         try {
+            console.log('api url', api.defaults.baseURL);
             const response = await api.post<GuestLoginResponse>(`auth/guest?name=${encodeURIComponent(name)}`, null);
             if (response.data.success) {
                 console.log(response.data);
@@ -15,6 +16,7 @@ export const loginAsGuest = createAsyncThunk<GuestLoginResponse, string, { rejec
             }
             return rejectWithValue(response.data.message);
         } catch (error) {
+            console.log('error', error);
             if (error instanceof AxiosError) {
                 return rejectWithValue(
                     error.response?.data?.message
@@ -50,6 +52,23 @@ export const googleSignIn = createAsyncThunk<GoogleLoginResponse, void, { reject
             }
         }
     }
+);
+
+export const getAccessTokenFromRefreshToken = createAsyncThunk<GetAccessTokenFromRefreshTokenResponse, string, { rejectValue: string }>(
+    'auth/getAccessTokenFromRefreshToken',
+    async (refreshToken, { rejectWithValue }) => {
+        try {
+            const response = await api.post<GetAccessTokenFromRefreshTokenResponse>(`auth/access-token?refresh_token=${encodeURIComponent(refreshToken)}`, null);
+            return response.data;
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                return rejectWithValue(
+                    error.response?.data?.message
+                );
+            }
+            return rejectWithValue('An unexpected error occurred');
+        }
+    },
 );
 
 const initialState: AuthState = {
@@ -97,6 +116,14 @@ export const authSlice = createSlice({
         }).addCase(googleSignIn.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || 'Google sign-in failed';
+        }).addCase(getAccessTokenFromRefreshToken.pending, (state) => {
+            state.loading = true;
+        }).addCase(getAccessTokenFromRefreshToken.fulfilled, (state, action) => {
+            state.access_token = action.payload.data.access_token;
+            state.loading = false;
+        }).addCase(getAccessTokenFromRefreshToken.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'Get access token from refresh token failed';
         });
     },
 });
