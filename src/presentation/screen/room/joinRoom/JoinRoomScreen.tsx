@@ -5,12 +5,13 @@ import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
 import { RootStackParamList } from '@type';
 import playzioLogo from '@assets/icons/playzio_logo.png';
 import { joinRoomScreenStyles } from './JoinScreenScreen.styles';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const JoinRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     return (
-        <View style={joinRoomScreenStyles.container}>
+        <SafeAreaView style={joinRoomScreenStyles.container}>
             <Image source={playzioLogo} style={joinRoomScreenStyles.logo} />
             <Text style={joinRoomScreenStyles.headerText}>Join a Room</Text>
             <Text style={joinRoomScreenStyles.titleText}>Enter Room Code</Text>
@@ -38,7 +39,7 @@ const JoinRoomScreen = () => {
                 showsVerticalScrollIndicator={false}
             />
             </View>
-        </View>
+        </SafeAreaView>
     );  
 };
 

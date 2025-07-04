@@ -8,7 +8,6 @@ export const loginAsGuest = createAsyncThunk<GuestLoginResponse, string, { rejec
     'auth/loginAsGuest',
     async (name, { rejectWithValue }) => {
         try {
-            console.log('api url', api.defaults.baseURL);
             const response = await api.post<GuestLoginResponse>(`auth/guest?name=${encodeURIComponent(name)}`, null);
             if (response.data.success) {
                 console.log(response.data);

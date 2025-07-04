@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from '@/store';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { googleSignIn } from '@/store/slices/authSlice';
 import AuthService from '@/service/AuthService';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const LoginScreen = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -64,7 +65,7 @@ const LoginScreen = () => {
     };
 
     return (
-        <View style={loginScreenStyles.container}>
+        <SafeAreaView style={loginScreenStyles.container}>
             <View style={loginScreenStyles.outerContainer}>
                 <Image source={playzioLogo} style={loginScreenStyles.logo} />
                 <TouchableOpacity style={loginScreenStyles.guestButton} onPress={() => navigation.navigate('Username')}>
@@ -81,7 +82,7 @@ const LoginScreen = () => {
                     )}
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );  
 };
 

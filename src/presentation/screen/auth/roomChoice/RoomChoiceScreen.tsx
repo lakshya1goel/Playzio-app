@@ -5,12 +5,13 @@ import { Text } from 'react-native-gesture-handler';
 import { RootStackParamList } from '@type';
 import { roomChoiceScreenStyles } from './RoomChoiceScreen.styles';
 import playzioLogo from '@assets/icons/playzio_logo.png';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const RoomChoiceScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     return (
-        <View style={roomChoiceScreenStyles.container}>
+        <SafeAreaView style={roomChoiceScreenStyles.container}>
             <View style={roomChoiceScreenStyles.outerContainer}>
                 <Image source={playzioLogo} style={roomChoiceScreenStyles.logo} />
                 <Text style={roomChoiceScreenStyles.headerText}>Welcome to the Playzio!</Text>
@@ -21,7 +22,7 @@ const RoomChoiceScreen = () => {
                     <Text style={roomChoiceScreenStyles.googleButtonText}>Join Room</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

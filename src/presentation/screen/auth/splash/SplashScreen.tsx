@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { Image, View } from 'react-native';
+import { Image } from 'react-native';
 import { RootStackParamList } from '@type';
 import { splashScreenStyles } from './SplashScreen.styles';
 import playzioLogo from '@assets/icons/playzio_logo.png';
@@ -9,6 +9,7 @@ import AuthService from '@/service/AuthService';
 import { getAccessTokenFromRefreshToken } from '@/store/slices/authSlice';
 import { AppDispatch } from '@/store';
 import { useDispatch } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SplashScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -66,9 +67,9 @@ const SplashScreen = () => {
   }, [navigation, dispatch]);
 
   return (
-    <View style={splashScreenStyles.container}>
+    <SafeAreaView style={splashScreenStyles.container}>
       <Image source={playzioLogo} style={splashScreenStyles.logo} />
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { createRoom } from '@/store/slices/roomSlice';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CreateRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -47,7 +48,7 @@ const CreateRoomScreen = () => {
     };
 
     return (
-        <View style={createRoomScreenStyles.container}>
+        <SafeAreaView style={createRoomScreenStyles.container}>
             <Image source={playzioLogo} style={createRoomScreenStyles.logo} />
             <Text style={createRoomScreenStyles.headerText}>Create Your Room</Text>
             <Text style={createRoomScreenStyles.titleText}>Room Name</Text>
@@ -70,7 +71,7 @@ const CreateRoomScreen = () => {
                     <Text style={createRoomScreenStyles.buttonText}>Create Room</Text>
                 )}
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );  
 };
 
