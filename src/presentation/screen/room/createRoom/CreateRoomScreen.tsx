@@ -8,7 +8,8 @@ import { createRoomScreenStyles } from './CreateRoomScreen.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
-import { createRoom } from '@/store/slices/roomSlice';
+import { createRoom, resetRoomState } from '@/store/slices/roomSlice';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CreateRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -26,6 +27,7 @@ const CreateRoomScreen = () => {
     useEffect(() => {
         if (success) {
             navigation.navigate('Game');
+            dispatch(resetRoomState());
         }
     }, [success]);
 
@@ -47,11 +49,11 @@ const CreateRoomScreen = () => {
     };
 
     return (
-        <View style={createRoomScreenStyles.container}>
+        <SafeAreaView style={createRoomScreenStyles.container}>
             <Image source={playzioLogo} style={createRoomScreenStyles.logo} />
             <Text style={createRoomScreenStyles.headerText}>Create Your Room</Text>
             <Text style={createRoomScreenStyles.titleText}>Room Name</Text>
-            <TextInput style={createRoomScreenStyles.input} placeholder="Room Name" placeholderTextColor="#4A0E72" />
+            <TextInput style={createRoomScreenStyles.input} placeholder="Room Name" placeholderTextColor="#4A0E72" value={name} onChangeText={setName} />
             <Text style={createRoomScreenStyles.titleText}>Privacy Setting</Text>
             <View style={createRoomScreenStyles.toggleContainer}>
                 <TouchableOpacity style={[createRoomScreenStyles.toggleOption, selectedPrivacy === 'public' && createRoomScreenStyles.toggleOptionSelected]}
@@ -70,7 +72,7 @@ const CreateRoomScreen = () => {
                     <Text style={createRoomScreenStyles.buttonText}>Create Room</Text>
                 )}
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );  
 };
 

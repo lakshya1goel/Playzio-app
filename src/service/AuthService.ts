@@ -5,6 +5,7 @@ interface AuthTokens {
     refreshToken: string;
     accessExpTime: number;
     refreshExpTime: number;
+    userType: string;
 }
 
 class AuthService {
@@ -15,6 +16,7 @@ class AuthService {
                 ['refreshToken', tokens.refreshToken],
                 ['accessExpTime', tokens.accessExpTime.toString()],
                 ['refreshExpTime', tokens.refreshExpTime.toString()],
+                ['userType', tokens.userType]
             ]);
         } catch (error) {
             console.error('Error storing tokens:', error);
@@ -24,14 +26,14 @@ class AuthService {
 
     async getToken(): Promise<AuthTokens | null> {
         try {
-            const tokens = await AsyncStorage.multiGet(['accessToken', 'refreshToken', 'accessExpTime', 'refreshExpTime']);
-            const [accessToken, refreshToken, accessExpTime, refreshExpTime] = tokens.map(([_, value]) => value);
+            const tokens = await AsyncStorage.multiGet(['accessToken', 'refreshToken', 'accessExpTime', 'refreshExpTime', 'userType']);
+            const [accessToken, refreshToken, accessExpTime, refreshExpTime, userType] = tokens.map(([_, value]) => value);
 
-            if (!accessToken || !refreshToken || !accessExpTime || !refreshExpTime) {
+            if (!accessToken || !refreshToken || !accessExpTime || !refreshExpTime || !userType) {
                 return null;
             }
 
-            return {accessToken, refreshToken, accessExpTime: Number(accessExpTime), refreshExpTime: Number(refreshExpTime)};
+            return {accessToken, refreshToken, accessExpTime: Number(accessExpTime), refreshExpTime: Number(refreshExpTime), userType};
         } catch (error) {
             console.error('Error retrieving tokens:', error);
             throw new Error('Failed to retrieve authentication tokens');
@@ -40,7 +42,7 @@ class AuthService {
 
     async removeToken(): Promise<void> {
         try {
-            await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'accessExpTime', 'refreshExpTime']);
+            await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'accessExpTime', 'refreshExpTime', 'userType']);
         } catch (error) {
             console.error('Error removing tokens:', error);
             throw new Error('Failed to remove authentication tokens');

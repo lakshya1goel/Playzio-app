@@ -107,4 +107,10 @@ export const joinRoomScreenStyles = StyleSheet.create({
         color: '#000',
         fontSize: 16,
     },
+    noRoomsText: {
+        color: '#fff',
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: '40%',
+    },
 });

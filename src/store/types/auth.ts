@@ -10,6 +10,12 @@ export interface AuthState {
     isLoggedIn: boolean;
 }
 
+export interface GoogleLoginResponse {
+    success: boolean;
+    message: string;
+    data: User;
+}
+
 export interface GuestLoginResponse {
     success: boolean;
     message: string;
@@ -25,4 +31,17 @@ export interface User {
     name: string;
     email: string;
     profile_pic: string;
+    access_token: string;
+    access_token_exp: number;
+    refresh_token: string;
+    refresh_token_exp: number;
+}
+
+export interface GetAccessTokenFromRefreshTokenResponse {
+    success: boolean;
+    message: string;
+    data: {
+        access_token: string;
+        access_token_exp: number;
+    }
 }
