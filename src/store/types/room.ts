@@ -2,9 +2,13 @@ import { User } from "./auth";
 
 export interface RoomState {
     room: Room | null;
+    rooms: Room[];
     loading: boolean;
     error: string | null;
     success: boolean;
+    fetchRoomsSuccess: boolean;
+    fetchRoomsLoading: boolean;
+    fetchRoomsError: string | null;
 }
 
 export interface CreateRoomRequest {
@@ -36,4 +40,15 @@ export interface Member {
     guest_id: string;
     guest_name: string;
     is_creator: boolean;
+}
+
+export interface JoinRoomResponse {
+    success: boolean;
+    message: string;
+}
+
+export interface GetRoomsResponse {
+    success: boolean;
+    message: string;
+    data: Room[];
 }
