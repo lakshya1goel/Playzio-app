@@ -1,4 +1,5 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text, TextInput } from 'react-native-gesture-handler';
@@ -11,7 +12,7 @@ import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { loginAsGuest } from '@/store/slices/authSlice';
 
 const UsernameScreen = () => {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const [name, setName] = useState('');
     const { loading, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
@@ -25,7 +26,7 @@ const UsernameScreen = () => {
     useEffect(() => {
         if (isLoggedIn) {
             setName('');
-            navigation.navigate('RoomChoice');
+            navigation.replace('RoomChoice');
         }
     }, [isLoggedIn, navigation]);
 

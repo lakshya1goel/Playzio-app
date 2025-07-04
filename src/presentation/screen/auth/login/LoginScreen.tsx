@@ -1,4 +1,5 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
 import { View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text } from 'react-native-gesture-handler';
@@ -15,7 +16,7 @@ import { googleSignIn } from '@/store/slices/authSlice';
 import AuthService from '@/service/AuthService';
 
 const LoginScreen = () => {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const { loading, error, isLoggedIn, access_token, refresh_token } = useSelector((state: RootState) => state.auth);
 
@@ -48,7 +49,7 @@ const LoginScreen = () => {
                         accessExpTime: accessExpTime.getTime(),
                         refreshExpTime: refreshExpTime.getTime(),
                     });
-                    navigation.navigate('RoomChoice');
+                    navigation.replace('RoomChoice');
                 } catch (error) {
                     showErrorMessage('Failed to save authentication tokens');
                 }
