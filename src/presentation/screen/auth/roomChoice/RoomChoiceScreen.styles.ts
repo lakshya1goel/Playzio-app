@@ -51,4 +51,13 @@ export const roomChoiceScreenStyles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
     },
+    connectingText: {
+        color: '#666',
+        fontSize: 14,
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    disabledButton: {
+        opacity: 0.6,
+    },
 });
