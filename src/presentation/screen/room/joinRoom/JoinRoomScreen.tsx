@@ -30,12 +30,6 @@ const JoinRoomScreen = () => {
         }
     }, [success]);
 
-    useEffect(() => {
-        if (fetchRoomsSuccess) {
-            dispatch(resetRoomState());
-        }
-    }, [fetchRoomsSuccess]);
-
     const validate = (): boolean => {
         if (!joinCode) {
             showErrorMessage('Please enter a room code');
@@ -45,7 +39,6 @@ const JoinRoomScreen = () => {
     };
 
     const handleJoinRoom = async (joinCode: string) => {
-        if (!validate()) return;
         await dispatch(joinRoom(joinCode)).unwrap();
     };
 
@@ -63,7 +56,7 @@ const JoinRoomScreen = () => {
             <Text style={joinRoomScreenStyles.headerText}>Join a Room</Text>
             <Text style={joinRoomScreenStyles.titleText}>Enter Room Code</Text>
             <TextInput style={joinRoomScreenStyles.input} placeholder="Room Code" placeholderTextColor="#4A0E72" value={joinCode} onChangeText={setJoinCode} />
-            <TouchableOpacity style={joinRoomScreenStyles.button} onPress={() => handleJoinRoom(joinCode)}>
+            <TouchableOpacity style={joinRoomScreenStyles.button} onPress={() => validate() && handleJoinRoom(joinCode)} disabled={loading}>
                 {loading ? (
                     <ActivityIndicator color="#fff" />
                 ) : (

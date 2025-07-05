@@ -9,6 +9,9 @@ export interface RoomState {
     fetchRoomsSuccess: boolean;
     fetchRoomsLoading: boolean;
     fetchRoomsError: string | null;
+    leaveRoomSuccess: boolean;
+    leaveRoomLoading: boolean;
+    leaveRoomError: string | null;
 }
 
 export interface CreateRoomRequest {
@@ -43,6 +46,11 @@ export interface Member {
 }
 
 export interface JoinRoomResponse {
+    success: boolean;
+    message: string;
+}
+
+export interface LeaveRoomResponse {
     success: boolean;
     message: string;
 }
