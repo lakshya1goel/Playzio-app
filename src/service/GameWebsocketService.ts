@@ -1,9 +1,9 @@
 import AuthService from './AuthService';
+import EventEmitter from 'eventemitter3';
 
-class GameWebSocketService {
+class GameWebSocketService extends EventEmitter {
     private socket: WebSocket | null = null;
     private roomId: number | null = null;
-    private listener: ((message: any) => void) | null = null;
 
     connect = async (url: string) => {
         if (this.socket) {
@@ -21,6 +21,7 @@ class GameWebSocketService {
 
         this.socket.onopen = () => {
             console.log('WebSocket connected');
+            this.emit('connected', {});
             if (this.roomId !== null) {
                 this.joinRoom(this.roomId);
             }
@@ -30,8 +31,8 @@ class GameWebSocketService {
             try {
                 const data = JSON.parse(event.data);
                 console.log('Received message:', data);
-                if (data?.room_id === this.roomId && this.listener) {
-                    this.listener(data);
+                if (data?.room_id === this.roomId) {
+                    this.emit(data.type, data);
                 }
             } catch (e) {
                 console.error('Invalid JSON message', e);
@@ -40,12 +41,13 @@ class GameWebSocketService {
 
         this.socket.onerror = (error) => {
             console.log('WebSocket error', error);
+            this.emit('error', error);
         };
 
         this.socket.onclose = () => {
             console.log('WebSocket disconnected');
+            this.emit('disconnected', {});
             this.socket = null;
-            this.listener = null;
             this.roomId = 0;
         };
     };
@@ -130,10 +132,6 @@ class GameWebSocketService {
         } else {
             console.log('WebSocket not open. Cannot send typing.');
         }
-    };
-
-    setlistener = (listener: ((message: any) => void) | null) => {
-        this.listener = listener;
     };
 
     disconnect = () => {
