@@ -14,13 +14,16 @@ import bomb from '@assets/images/bomb.png';
 import { gameComponentStyles, PLAYER_SIZE, CENTER_SIZE, RADIUS, CENTER_X, CENTER_Y } from './GameComponent.styles';
 import { GameUser } from '@/store/types/game';
 import gameWs from '@/service/GameWebsocketService';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store';
+import { addPlayer, removePlayer } from '@/store/slices/gameSlice';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
     player6, player7, player8, player9, player10
 ];
 
-const PlayerCircle = ({ player, idx, total }: { player: GameUser, idx: number, total: number }) => {
+const PlayerCircle = ({ player, idx, total, current_turn }: { player: GameUser, idx: number, total: number, current_turn: number }) => {
     const angle = (2 * Math.PI * idx) / total;
     const x = CENTER_X + RADIUS * Math.cos(angle) - PLAYER_SIZE / 2;
     const y = CENTER_Y + RADIUS * Math.sin(angle) - PLAYER_SIZE / 2;
@@ -40,7 +43,7 @@ const PlayerCircle = ({ player, idx, total }: { player: GameUser, idx: number, t
                 },
             ]}
         >
-            <Text style={gameComponentStyles.playerName}>{player.user_name}</Text>
+            <Text style={gameComponentStyles.playerName}>{player.user_name} {current_turn === idx ? '🔥' : ''}</Text>
             <View style={gameComponentStyles.avatarContainer}>
                 <Image
                     source={image}
@@ -51,7 +54,7 @@ const PlayerCircle = ({ player, idx, total }: { player: GameUser, idx: number, t
     );
 };
 
-const CenterCircle = () => (
+const CenterCircle = ({char_set}: {char_set: string}) => (
     <View
         style={[
             gameComponentStyles.centerCircleContainer,
@@ -68,12 +71,13 @@ const CenterCircle = () => (
             style={gameComponentStyles.centerCircleImage}
             resizeMode="cover"
         />
-        <Text style={gameComponentStyles.centerCircleText}>Center</Text>
+        <Text style={gameComponentStyles.centerCircleText}>{char_set}</Text>
     </View>
 );
 
 const GameComponent = () => {
-    const [players, setPlayers] = useState<GameUser[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const { players, current_turn, char_set } = useSelector((state: RootState) => state.game);
 
     useEffect(() => {
         const handleUserJoined = (message: any) => {
@@ -85,14 +89,7 @@ const GameComponent = () => {
                     user_name: message.payload.user_name,
                     lives: 3,
                 };
-
-                setPlayers(prevUsers => {
-                    const userExists = prevUsers.some(user => user.user_id === newUser.user_id);
-                    if (!userExists) {
-                        return [...prevUsers, newUser];
-                    }
-                    return prevUsers;
-                });
+                dispatch(addPlayer(newUser));
             }
         };
 
@@ -101,9 +98,7 @@ const GameComponent = () => {
             
             if (message.type === 'user_left' || message.type === 'leave') {
                 const userId = message.payload?.user_id || message.user_id;
-                setPlayers(prevUsers => 
-                    prevUsers.filter(user => user.user_id !== userId)
-                );
+                dispatch(removePlayer(userId));
             }
         };
 
@@ -116,14 +111,14 @@ const GameComponent = () => {
             gameWs.off('user_left', handleUserLeft);
             gameWs.off('leave', handleUserLeft);
         };
-    }, []);
+    }, [dispatch]);
 
     return (
-        <View style={[gameComponentStyles.outerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+        <View style={gameComponentStyles.outerContainer}>
             <View style={gameComponentStyles.boardContainer}>
-                <CenterCircle />
+                <CenterCircle char_set={char_set} />
                 {players.map((player, idx) => (
-                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} />
+                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} current_turn={current_turn} />
                 ))}
             </View>
         </View>

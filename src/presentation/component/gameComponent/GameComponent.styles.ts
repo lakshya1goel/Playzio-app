@@ -8,6 +8,7 @@ export const CENTER_Y = 120;
 
 export const gameComponentStyles = StyleSheet.create({
     outerContainer: {
+        justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'transparent',
         width: '100%',
