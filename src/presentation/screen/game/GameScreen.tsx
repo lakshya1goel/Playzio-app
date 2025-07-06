@@ -1,18 +1,16 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
-import { RootStackParamList } from '@type';
 import ChatComponent from '@/presentation/component/chatComponent/ChatComponent';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameComponent from '@/presentation/component/gameComponent/GameComponent';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import { leaveRoom, resetRoomState } from '@/store/slices/roomSlice';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
+import GameTimerComponent from '@/presentation/component/gameComponent/GameTimerComponent';
+import gameWs from '@/service/GameWebsocketService';
 
 const GameScreen = () => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const { leaveRoomLoading, leaveRoomError, leaveRoomSuccess } = useSelector((state: RootState) => state.room);
 
@@ -24,9 +22,10 @@ const GameScreen = () => {
 
     useEffect(() => {
         if (leaveRoomSuccess) {
+            gameWs.leaveRoom();
             dispatch(resetRoomState());
         }
-    }, [leaveRoomSuccess, navigation, dispatch]);
+    }, [leaveRoomSuccess, dispatch]);
 
     useEffect(() => {
         return () => {
@@ -40,6 +39,7 @@ const GameScreen = () => {
                 <ActivityIndicator size="large" color="#0000ff" style={styles.loading} />
             ) : (
                 <>
+                    <GameTimerComponent />
                     <GameComponent />
                     <ChatComponent />
                 </>
