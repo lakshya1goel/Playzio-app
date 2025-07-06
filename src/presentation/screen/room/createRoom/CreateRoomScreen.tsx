@@ -10,12 +10,13 @@ import { AppDispatch, RootState } from '@/store';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { createRoom, resetRoomState } from '@/store/slices/roomSlice';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import gameWs from '@/service/GameWebsocketService';
 
 const CreateRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [selectedPrivacy, setSelectedPrivacy] = useState<'public' | 'private'>('public');
     const dispatch = useDispatch<AppDispatch>();
-    const { loading, error, success } = useSelector((state: RootState) => state.room);
+    const { loading, error, success, room } = useSelector((state: RootState) => state.room);
     const [name, setName] = useState('');
 
     useEffect(() => {
@@ -26,6 +27,7 @@ const CreateRoomScreen = () => {
 
     useEffect(() => {
         if (success) {
+            gameWs.joinRoom(room?.ID || 0);
             navigation.navigate('Game');
             dispatch(resetRoomState());
         }

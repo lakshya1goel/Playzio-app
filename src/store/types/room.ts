@@ -48,6 +48,7 @@ export interface Member {
 export interface JoinRoomResponse {
     success: boolean;
     message: string;
+    data: Room;
 }
 
 export interface LeaveRoomResponse {
