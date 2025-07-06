@@ -10,12 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { getRooms, joinRoom, resetRoomState } from '@/store/slices/roomSlice';
+import gameWs from '@/service/GameWebsocketService';
 
 const JoinRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const [joinCode, setJoinCode] = useState('');
-    const { loading, error, success, fetchRoomsLoading, fetchRoomsSuccess, rooms } = useSelector((state: RootState) => state.room);
+    const { loading, error, success, fetchRoomsLoading, rooms, room } = useSelector((state: RootState) => state.room);
 
     useEffect(() => {
         if (error) {
@@ -25,6 +26,7 @@ const JoinRoomScreen = () => {
 
     useEffect(() => {
         if (success) {
+            gameWs.joinRoom(room?.ID || 0);
             navigation.navigate('Game');
             dispatch(resetRoomState());
         }

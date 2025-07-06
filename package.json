@@ -17,6 +17,7 @@
     "@react-navigation/stack": "^7.4.2",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
+    "eventemitter3": "^5.0.1",
     "react": "19.1.0",
     "react-native": "0.80.0",
     "react-native-dotenv": "^3.4.11",
