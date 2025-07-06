@@ -10,7 +10,7 @@ const GameTimerComponent = () => {
     useEffect(() => {
         const handleTimerStarted = (message: any) => {
             console.log('Timer started:', message);
-            const duration = message.payload?.duration || 60;
+            const duration = message.payload?.duration || 120;
             setTimer(duration);
             setIsTimerActive(true);
         };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, Text } from 'react-native';
 import player1 from '@assets/images/player1.png';
 import player2 from '@assets/images/player2.png';
@@ -12,28 +12,24 @@ import player9 from '@assets/images/player9.jpeg';
 import player10 from '@assets/images/player10.png';
 import bomb from '@assets/images/bomb.png';
 import { gameComponentStyles, PLAYER_SIZE, CENTER_SIZE, RADIUS, CENTER_X, CENTER_Y } from './GameComponent.styles';
+import { GameUser } from '@/store/types/game';
+import gameWs from '@/service/GameWebsocketService';
 
-const players = [
-    { name: 'Player 1', lives: 3, image: player1 },
-    { name: 'Player 2', lives: 3, image: player2 },
-    { name: 'Player 3', lives: 3, image: player3 },
-    { name: 'Player 4', lives: 3, image: player4 },
-    { name: 'Player 5', lives: 3, image: player5 },
-    { name: 'Player 6', lives: 3, image: player6 }, 
-    { name: 'Player 7', lives: 3, image: player7 },
-    { name: 'Player 8', lives: 3, image: player8 },
-    { name: 'Player 9', lives: 3, image: player9 },
-    { name: 'Player 10', lives: 3, image: player10 },
+const defaultPlayerImages = [
+    player1, player2, player3, player4, player5,
+    player6, player7, player8, player9, player10
 ];
 
-const PlayerCircle = ({ player, idx, total }: { player: any, idx: number, total: number }) => {
+const PlayerCircle = ({ player, idx, total }: { player: GameUser, idx: number, total: number }) => {
     const angle = (2 * Math.PI * idx) / total;
     const x = CENTER_X + RADIUS * Math.cos(angle) - PLAYER_SIZE / 2;
     const y = CENTER_Y + RADIUS * Math.sin(angle) - PLAYER_SIZE / 2;
 
+    const image = defaultPlayerImages[idx % defaultPlayerImages.length];
+
     return (
         <View
-            key={player.name}
+            key={idx}
             style={[
                 gameComponentStyles.playerCircleContainer,
                 {
@@ -44,10 +40,10 @@ const PlayerCircle = ({ player, idx, total }: { player: any, idx: number, total:
                 },
             ]}
         >
-            <Text style={gameComponentStyles.playerName}>{player.name}</Text>
+            <Text style={gameComponentStyles.playerName}>{player.user_name}</Text>
             <View style={gameComponentStyles.avatarContainer}>
                 <Image
-                    source={player.image}
+                    source={image}
                     style={gameComponentStyles.avatar}
                 />
             </View>
@@ -77,12 +73,57 @@ const CenterCircle = () => (
 );
 
 const GameComponent = () => {
+    const [players, setPlayers] = useState<GameUser[]>([]);
+
+    useEffect(() => {
+        const handleUserJoined = (message: any) => {
+            console.log('User joined:', message);
+            
+            if (message.type === 'user_joined') {
+                const newUser: GameUser = {
+                    user_id: message.payload.user_id,
+                    user_name: message.payload.user_name,
+                    lives: 3,
+                };
+
+                setPlayers(prevUsers => {
+                    const userExists = prevUsers.some(user => user.user_id === newUser.user_id);
+                    if (!userExists) {
+                        return [...prevUsers, newUser];
+                    }
+                    return prevUsers;
+                });
+            }
+        };
+
+        const handleUserLeft = (message: any) => {
+            console.log('User left:', message);
+            
+            if (message.type === 'user_left' || message.type === 'leave') {
+                const userId = message.payload?.user_id || message.user_id;
+                setPlayers(prevUsers => 
+                    prevUsers.filter(user => user.user_id !== userId)
+                );
+            }
+        };
+
+        gameWs.on('user_joined', handleUserJoined);
+        gameWs.on('user_left', handleUserLeft);
+        gameWs.on('leave', handleUserLeft);
+
+        return () => {
+            gameWs.off('user_joined', handleUserJoined);
+            gameWs.off('user_left', handleUserLeft);
+            gameWs.off('leave', handleUserLeft);
+        };
+    }, []);
+
     return (
         <View style={[gameComponentStyles.outerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
             <View style={gameComponentStyles.boardContainer}>
                 <CenterCircle />
                 {players.map((player, idx) => (
-                    <PlayerCircle key={player.name} player={player} idx={idx} total={players.length} />
+                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} />
                 ))}
             </View>
         </View>
