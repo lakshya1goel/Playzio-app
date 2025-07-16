@@ -6,6 +6,8 @@ const initialState: GameState = {
     round: 0,
     time_limit: 0,
     char_set: '',
+    typing_text: '',
+    is_answer_correct: null,
     players: [],
 };
 
@@ -40,9 +42,15 @@ export const gameSlice = createSlice({
         },
         setPlayers: (state, action) => {
             state.players = action.payload;
+        },
+        setTypingText: (state, action) => {
+            state.typing_text = action.payload;
+        },
+        setAnswerStatus: (state, action) => {
+            state.is_answer_correct = action.payload;
         }
     },
 });
 
 export default gameSlice.reducer;
-export const { resetGameState, setCurrentTurn, setRound, setTimeLimit, setCharSet, addPlayer, removePlayer, setPlayers } = gameSlice.actions;
+export const { resetGameState, setCurrentTurn, setRound, setTimeLimit, setCharSet, addPlayer, removePlayer, setPlayers, setTypingText, setAnswerStatus } = gameSlice.actions;

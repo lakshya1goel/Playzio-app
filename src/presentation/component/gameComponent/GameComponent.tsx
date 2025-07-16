@@ -16,14 +16,14 @@ import { GameUser } from '@/store/types/game';
 import gameWs from '@/service/GameWebsocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
-import { addPlayer, removePlayer } from '@/store/slices/gameSlice';
+import { addPlayer, removePlayer, setAnswerStatus, setTypingText } from '@/store/slices/gameSlice';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
     player6, player7, player8, player9, player10
 ];
 
-const PlayerCircle = ({ player, idx, total, current_turn }: { player: GameUser, idx: number, total: number, current_turn: number }) => {
+const PlayerCircle = ({ player, idx, total, current_turn, typing_text }: { player: GameUser, idx: number, total: number, current_turn: number, typing_text: string }) => {
     const angle = (2 * Math.PI * idx) / total;
     const x = CENTER_X + RADIUS * Math.cos(angle) - PLAYER_SIZE / 2;
     const y = CENTER_Y + RADIUS * Math.sin(angle) - PLAYER_SIZE / 2;
@@ -43,13 +43,25 @@ const PlayerCircle = ({ player, idx, total, current_turn }: { player: GameUser, 
                 },
             ]}
         >
-            <Text style={gameComponentStyles.playerName}>{player.user_name} {current_turn === idx ? '🔥' : ''}</Text>
+            <View style={gameComponentStyles.playerStatusContainer}>
+                <Text style={gameComponentStyles.playerStatusText}>{player.lives}</Text>
+            </View>
             <View style={gameComponentStyles.avatarContainer}>
                 <Image
                     source={image}
                     style={gameComponentStyles.avatar}
                 />
             </View>
+            <Text style={gameComponentStyles.playerName}>
+                {player.user_name} {current_turn === idx ? '🔥' : ''}
+            </Text>
+            {current_turn === idx && (
+                <View style={{ alignItems: 'center', marginTop: 2 }}>
+                    <Text style={{ color: '#FFD700', fontSize: 13 }}>
+                        {typing_text || ''}
+                    </Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -77,7 +89,7 @@ const CenterCircle = ({char_set}: {char_set: string}) => (
 
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { players, current_turn, char_set } = useSelector((state: RootState) => state.game);
+    const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
 
     useEffect(() => {
         const handleUserJoined = (message: any) => {
@@ -102,14 +114,35 @@ const GameComponent = () => {
             }
         };
 
+        const handleTyping = (message: any) => {
+            console.log('Typing:', message);
+
+            if (message.type === 'typing') {
+                dispatch(setTypingText(message.payload.text));
+            }
+        };
+
+        const handleAnswer = (message: any) => {
+            console.log('Answer:', message);
+
+            if (message.type === 'answer') {
+                dispatch(setTypingText(message.payload.answer));
+                dispatch(setAnswerStatus(message.payload.correct));
+            }
+        };
+
         gameWs.on('user_joined', handleUserJoined);
         gameWs.on('user_left', handleUserLeft);
         gameWs.on('leave', handleUserLeft);
+        gameWs.on('typing', handleTyping);
+        gameWs.on('answer', handleAnswer);
 
         return () => {
             gameWs.off('user_joined', handleUserJoined);
             gameWs.off('user_left', handleUserLeft);
             gameWs.off('leave', handleUserLeft);
+            gameWs.off('typing', handleTyping);
+            gameWs.off('answer', handleAnswer);
         };
     }, [dispatch]);
 
@@ -118,7 +151,7 @@ const GameComponent = () => {
             <View style={gameComponentStyles.boardContainer}>
                 <CenterCircle char_set={char_set} />
                 {players.map((player, idx) => (
-                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} current_turn={current_turn} />
+                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} current_turn={current_turn} typing_text={typing_text} />
                 ))}
             </View>
         </View>
