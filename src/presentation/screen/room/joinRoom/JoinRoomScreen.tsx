@@ -29,7 +29,10 @@ const JoinRoomScreen = () => {
         if (success) {
             gameWs.joinRoom(room?.ID || 0);
             console.log("room?.members", room?.members);
-            dispatch(setPlayers(room?.members.slice(0, room?.members.length - 1) || []));
+            dispatch(setPlayers((room?.members.slice(0, room?.members.length - 1) || []).map(member => ({
+                ...member,
+                lives: 3,
+            }))));
             navigation.navigate('Game');
             dispatch(resetRoomState());
         }

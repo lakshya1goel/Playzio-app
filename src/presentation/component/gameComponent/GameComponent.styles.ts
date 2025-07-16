@@ -65,18 +65,11 @@ export const gameComponentStyles = StyleSheet.create({
         zIndex: 1,
     },
     playerStatusContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: PLAYER_SIZE,
-        height: PLAYER_SIZE,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     playerStatusText: {
         color: '#fff',
         fontSize: 12,
-        textAlign: 'center',
-        marginBottom: 2,
-        marginTop: 0,
     },
 });

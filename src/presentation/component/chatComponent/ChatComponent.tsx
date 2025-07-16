@@ -3,9 +3,15 @@ import { View } from 'react-native';
 import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
 import { chatComponentStyles } from './ChatComponent.styles';
 import gameWs from '@/service/GameWebsocketService';
+import { RootState } from '@/store';
+import { useSelector } from 'react-redux';
 
 const ChatComponent = () => {
     const [message, setMessage] = useState<string>('');
+    const { current_turn } = useSelector((state: RootState) => state.game);
+    const { user_id } = useSelector((state: RootState) => state.auth);
+
+    const isMyTurn = user_id === current_turn;
 
     return (
         <View style={chatComponentStyles.outerContainer}>

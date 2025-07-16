@@ -71,6 +71,7 @@ export const getAccessTokenFromRefreshToken = createAsyncThunk<GetAccessTokenFro
 );
 
 const initialState: AuthState = {
+    user_id: null,
     name: '',
     email: null,
     profile_pic: null,
@@ -105,6 +106,7 @@ export const authSlice = createSlice({
         }).addCase(googleSignIn.pending, (state) => {
             state.loading = true;
         }).addCase(googleSignIn.fulfilled, (state, action) => {
+            state.user_id = action.payload.data.ID;
             state.name = action.payload.data.name;
             state.email = action.payload.data.email;
             state.profile_pic = action.payload.data.profile_pic;

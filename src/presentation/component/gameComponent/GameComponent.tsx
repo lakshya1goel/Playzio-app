@@ -23,7 +23,7 @@ const defaultPlayerImages = [
     player6, player7, player8, player9, player10
 ];
 
-const PlayerCircle = ({ player, idx, total, current_turn, typing_text }: { player: GameUser, idx: number, total: number, current_turn: number, typing_text: string }) => {
+const PlayerCircle = ({ player, idx, total, isCurrentTurn, typing_text }: { player: GameUser, idx: number, total: number, isCurrentTurn: boolean, typing_text: string }) => {
     const angle = (2 * Math.PI * idx) / total;
     const x = CENTER_X + RADIUS * Math.cos(angle) - PLAYER_SIZE / 2;
     const y = CENTER_Y + RADIUS * Math.sin(angle) - PLAYER_SIZE / 2;
@@ -32,7 +32,7 @@ const PlayerCircle = ({ player, idx, total, current_turn, typing_text }: { playe
 
     return (
         <View
-            key={idx}
+            key={player.user_id}
             style={[
                 gameComponentStyles.playerCircleContainer,
                 {
@@ -43,25 +43,24 @@ const PlayerCircle = ({ player, idx, total, current_turn, typing_text }: { playe
                 },
             ]}
         >
-            <View style={gameComponentStyles.playerStatusContainer}>
-                <Text style={gameComponentStyles.playerStatusText}>{player.lives}</Text>
-            </View>
-            <View style={gameComponentStyles.avatarContainer}>
-                <Image
-                    source={image}
-                    style={gameComponentStyles.avatar}
-                />
-            </View>
-            <Text style={gameComponentStyles.playerName}>
-                {player.user_name} {current_turn === idx ? '🔥' : ''}
-            </Text>
-            {current_turn === idx && (
+            {isCurrentTurn && (
                 <View style={{ alignItems: 'center', marginTop: 2 }}>
                     <Text style={{ color: '#FFD700', fontSize: 13 }}>
                         {typing_text || ''}
                     </Text>
                 </View>
             )}
+            <View style={gameComponentStyles.avatarContainer}>
+                <Image source={image} style={gameComponentStyles.avatar} />
+            </View>
+            <Text style={gameComponentStyles.playerName}>
+                {player.user_name} {isCurrentTurn ? '🔥' : ''}
+            </Text>
+            <View style={gameComponentStyles.playerStatusContainer}>
+                {Array.from({ length: player.lives || 0 }).map((_, i) => (
+                    <Text key={i} style={gameComponentStyles.playerStatusText}>❤️</Text>
+                ))}
+            </View>
         </View>
     );
 };
@@ -189,7 +188,7 @@ const GameComponent = () => {
             <View style={gameComponentStyles.boardContainer}>
                 <CenterCircle char_set={char_set} />
                 {players.map((player, idx) => (
-                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} current_turn={current_turn} typing_text={typing_text} />
+                    <PlayerCircle key={player.user_id} player={player} idx={idx} total={players.length} isCurrentTurn={current_turn === player.user_id} typing_text={typing_text} />
                 ))}
             </View>
         </View>

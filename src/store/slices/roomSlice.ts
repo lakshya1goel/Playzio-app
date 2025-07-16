@@ -8,10 +8,8 @@ api.interceptors.request.use(
     async (config) => {
         const tokens = await authService.getToken();
         if (tokens?.accessToken) {
-            console.log('Setting Authorization header:', tokens.accessToken);
             config.headers.Authorization = `Bearer ${tokens.accessToken}`;
         }
-        console.log('Final config headers:', config.headers);
         return config;
     },
     (error) => Promise.reject(error)
@@ -21,7 +19,6 @@ export const createRoom = createAsyncThunk<CreateRoomResponse, CreateRoomRequest
     'room/createRoom',
     async (room, { rejectWithValue }) => {
         try {
-            console.log("createRoom headers", api.defaults.headers);
             const response = await api.post<CreateRoomResponse>(`room`, room);
             console.log(response.data);
             return response.data;
@@ -40,7 +37,6 @@ export const joinRoom = createAsyncThunk<JoinRoomResponse, string, { rejectValue
     'room/joinRoom',
     async (joinCode, { rejectWithValue }) => {
         try {
-            console.log("joinRoom headers", api.defaults.headers);
             const response = await api.post<JoinRoomResponse>(`room/join?join_code=${encodeURIComponent(joinCode)}`, null);
             console.log(response.data);
             return response.data;
