@@ -8,6 +8,7 @@ const initialState: GameState = {
     char_set: '',
     typing_text: '',
     is_answer_correct: null,
+    winner_id: null,
     players: [],
 };
 
@@ -34,6 +35,21 @@ export const gameSlice = createSlice({
         setCharSet: (state, action) => {
             state.char_set = action.payload;
         },
+        setLives: (state, action) => {
+            state.players = state.players.map(player => ({
+                ...player,
+                lives: player.user_id === action.payload.user_id ? action.payload.lives : player.lives
+            }));
+        },
+        setScore: (state, action) => {
+            state.players = state.players.map(player => ({
+                ...player,
+                score: player.user_id === action.payload.user_id ? action.payload.score : player.score
+            }));
+        },
+        setWinnerId: (state, action) => {
+            state.winner_id = action.payload;
+        },
         addPlayer: (state, action) => {
             state.players.push(action.payload);
         },
@@ -53,4 +69,4 @@ export const gameSlice = createSlice({
 });
 
 export default gameSlice.reducer;
-export const { resetGameState, setCurrentTurn, setRound, setTimeLimit, setCharSet, addPlayer, removePlayer, setPlayers, setTypingText, setAnswerStatus } = gameSlice.actions;
+export const { resetGameState, setCurrentTurn, setRound, setTimeLimit, setCharSet, setLives, setScore, setWinnerId, addPlayer, removePlayer, setPlayers, setTypingText, setAnswerStatus } = gameSlice.actions;

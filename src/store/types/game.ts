@@ -2,6 +2,7 @@ export interface GameUser {
     user_id: number;
     user_name: string;
     lives?: number;
+    score?: number;
 }
 
 export interface GameState {
@@ -11,5 +12,6 @@ export interface GameState {
     char_set: string;
     typing_text: string;
     is_answer_correct: boolean | null;
+    winner_id: number | null;
     players: GameUser[];
 }

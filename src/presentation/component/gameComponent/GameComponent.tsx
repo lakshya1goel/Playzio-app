@@ -16,7 +16,7 @@ import { GameUser } from '@/store/types/game';
 import gameWs from '@/service/GameWebsocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
-import { addPlayer, removePlayer, setAnswerStatus, setTypingText } from '@/store/slices/gameSlice';
+import { addPlayer, removePlayer, setAnswerStatus, setCharSet, setCurrentTurn, setLives, setRound, setScore, setTimeLimit, setTypingText, setWinnerId } from '@/store/slices/gameSlice';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
@@ -131,11 +131,48 @@ const GameComponent = () => {
             }
         };
 
+        const handleTurnEnd = (message: any) => {
+            console.log('Turn end:', message);
+
+            if (message.type === 'turn_ended') {
+                dispatch(setTypingText(''));
+                dispatch(setAnswerStatus(null));
+                dispatch(setLives({user_id: message.user_id || message.payload.user_id, lives: message.payload.lives_left}));
+                dispatch(setScore({user_id: message.user_id || message.payload.user_id, score: message.payload.score}));
+                dispatch(setCharSet(message.payload.char_set));
+                dispatch(setRound(message.payload.round));
+            }
+        };
+
+        const handleNextTurn = (message: any) => {
+            console.log('Next turn:', message);
+
+            if (message.type === 'next_turn') {
+                dispatch(setCurrentTurn(message.payload.user_id));
+                dispatch(setTypingText(''));
+                dispatch(setAnswerStatus(null));
+                dispatch(setCharSet(message.payload.char_set));
+                dispatch(setRound(message.payload.round));
+                dispatch(setTimeLimit(message.payload.time_limit));
+            }
+        };
+
+        const handleGameOver = (message: any) => {
+            console.log('Game over:', message);
+
+            if (message.type === 'game_over') {
+                dispatch(setWinnerId(message.payload.winner_id));
+            }
+        };
+
         gameWs.on('user_joined', handleUserJoined);
         gameWs.on('user_left', handleUserLeft);
         gameWs.on('leave', handleUserLeft);
         gameWs.on('typing', handleTyping);
         gameWs.on('answer', handleAnswer);
+        gameWs.on('turn_ended', handleTurnEnd);
+        gameWs.on('next_turn', handleNextTurn);
+        gameWs.on('game_over', handleGameOver);
 
         return () => {
             gameWs.off('user_joined', handleUserJoined);
@@ -143,6 +180,7 @@ const GameComponent = () => {
             gameWs.off('leave', handleUserLeft);
             gameWs.off('typing', handleTyping);
             gameWs.off('answer', handleAnswer);
+            gameWs.off('turn_ended', handleTurnEnd);
         };
     }, [dispatch]);
 
