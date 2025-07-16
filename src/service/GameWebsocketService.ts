@@ -104,21 +104,6 @@ class GameWebSocketService extends EventEmitter {
         }
     };
 
-    startGame = () => {
-        if (this.socket?.readyState === WebSocket.OPEN) {
-            const message = JSON.stringify({
-                type: 'start_game',
-                room_id: this.roomId,
-                payload: {
-                    "message": "Starting game",
-                },
-            });
-            this.socket.send(message);
-        } else {
-            console.log('WebSocket not open. Cannot start game.');
-        }
-    };
-
     typing = (content: string) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({

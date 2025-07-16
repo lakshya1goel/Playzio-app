@@ -7,11 +7,11 @@ import authService from "@/service/AuthService";
 api.interceptors.request.use(
     async (config) => {
         const tokens = await authService.getToken();
-            if (tokens?.accessToken) {
-                config.headers.Authorization = `Bearer ${tokens.accessToken}`;
-            }
-            return config;
-        },
+        if (tokens?.accessToken) {
+            config.headers.Authorization = `Bearer ${tokens.accessToken}`;
+        }
+        return config;
+    },
     (error) => Promise.reject(error)
 );
 

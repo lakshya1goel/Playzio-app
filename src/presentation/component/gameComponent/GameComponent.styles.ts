@@ -64,4 +64,12 @@ export const gameComponentStyles = StyleSheet.create({
         fontSize: 18,
         zIndex: 1,
     },
+    playerStatusContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    playerStatusText: {
+        color: '#fff',
+        fontSize: 12,
+    },
 });

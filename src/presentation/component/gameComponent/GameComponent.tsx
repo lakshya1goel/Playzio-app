@@ -16,14 +16,14 @@ import { GameUser } from '@/store/types/game';
 import gameWs from '@/service/GameWebsocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
-import { addPlayer, removePlayer } from '@/store/slices/gameSlice';
+import { addPlayer, removePlayer, setAnswerStatus, setCharSet, setCurrentTurn, setLives, setRound, setScore, setTimeLimit, setTypingText, setWinnerId } from '@/store/slices/gameSlice';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
     player6, player7, player8, player9, player10
 ];
 
-const PlayerCircle = ({ player, idx, total, current_turn }: { player: GameUser, idx: number, total: number, current_turn: number }) => {
+const PlayerCircle = ({ player, idx, total, isCurrentTurn, typing_text }: { player: GameUser, idx: number, total: number, isCurrentTurn: boolean, typing_text: string }) => {
     const angle = (2 * Math.PI * idx) / total;
     const x = CENTER_X + RADIUS * Math.cos(angle) - PLAYER_SIZE / 2;
     const y = CENTER_Y + RADIUS * Math.sin(angle) - PLAYER_SIZE / 2;
@@ -32,7 +32,7 @@ const PlayerCircle = ({ player, idx, total, current_turn }: { player: GameUser, 
 
     return (
         <View
-            key={idx}
+            key={player.user_id}
             style={[
                 gameComponentStyles.playerCircleContainer,
                 {
@@ -43,12 +43,23 @@ const PlayerCircle = ({ player, idx, total, current_turn }: { player: GameUser, 
                 },
             ]}
         >
-            <Text style={gameComponentStyles.playerName}>{player.user_name} {current_turn === idx ? '🔥' : ''}</Text>
+            {isCurrentTurn && (
+                <View style={{ alignItems: 'center', marginTop: 2 }}>
+                    <Text style={{ color: '#FFD700', fontSize: 13 }}>
+                        {typing_text || ''}
+                    </Text>
+                </View>
+            )}
             <View style={gameComponentStyles.avatarContainer}>
-                <Image
-                    source={image}
-                    style={gameComponentStyles.avatar}
-                />
+                <Image source={image} style={gameComponentStyles.avatar} />
+            </View>
+            <Text style={gameComponentStyles.playerName}>
+                {player.user_name} {isCurrentTurn ? '🔥' : ''}
+            </Text>
+            <View style={gameComponentStyles.playerStatusContainer}>
+                {Array.from({ length: player.lives || 0 }).map((_, i) => (
+                    <Text key={i} style={gameComponentStyles.playerStatusText}>❤️</Text>
+                ))}
             </View>
         </View>
     );
@@ -77,7 +88,7 @@ const CenterCircle = ({char_set}: {char_set: string}) => (
 
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { players, current_turn, char_set } = useSelector((state: RootState) => state.game);
+    const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
 
     useEffect(() => {
         const handleUserJoined = (message: any) => {
@@ -102,14 +113,73 @@ const GameComponent = () => {
             }
         };
 
+        const handleTyping = (message: any) => {
+            console.log('Typing:', message);
+
+            if (message.type === 'typing') {
+                dispatch(setTypingText(message.payload.text));
+            }
+        };
+
+        const handleAnswer = (message: any) => {
+            console.log('Answer:', message);
+
+            if (message.type === 'answer') {
+                dispatch(setTypingText(message.payload.answer));
+                dispatch(setAnswerStatus(message.payload.correct));
+            }
+        };
+
+        const handleTurnEnd = (message: any) => {
+            console.log('Turn end:', message);
+
+            if (message.type === 'turn_ended') {
+                dispatch(setTypingText(''));
+                dispatch(setAnswerStatus(null));
+                dispatch(setLives({user_id: message.user_id || message.payload.user_id, lives: message.payload.lives_left}));
+                dispatch(setScore({user_id: message.user_id || message.payload.user_id, score: message.payload.score}));
+                dispatch(setCharSet(message.payload.char_set));
+                dispatch(setRound(message.payload.round));
+            }
+        };
+
+        const handleNextTurn = (message: any) => {
+            console.log('Next turn:', message);
+
+            if (message.type === 'next_turn') {
+                dispatch(setCurrentTurn(message.payload.user_id));
+                dispatch(setTypingText(''));
+                dispatch(setAnswerStatus(null));
+                dispatch(setCharSet(message.payload.char_set));
+                dispatch(setRound(message.payload.round));
+                dispatch(setTimeLimit(message.payload.time_limit));
+            }
+        };
+
+        const handleGameOver = (message: any) => {
+            console.log('Game over:', message);
+
+            if (message.type === 'game_over') {
+                dispatch(setWinnerId(message.payload.winner_id));
+            }
+        };
+
         gameWs.on('user_joined', handleUserJoined);
         gameWs.on('user_left', handleUserLeft);
         gameWs.on('leave', handleUserLeft);
+        gameWs.on('typing', handleTyping);
+        gameWs.on('answer', handleAnswer);
+        gameWs.on('turn_ended', handleTurnEnd);
+        gameWs.on('next_turn', handleNextTurn);
+        gameWs.on('game_over', handleGameOver);
 
         return () => {
             gameWs.off('user_joined', handleUserJoined);
             gameWs.off('user_left', handleUserLeft);
             gameWs.off('leave', handleUserLeft);
+            gameWs.off('typing', handleTyping);
+            gameWs.off('answer', handleAnswer);
+            gameWs.off('turn_ended', handleTurnEnd);
         };
     }, [dispatch]);
 
@@ -118,7 +188,7 @@ const GameComponent = () => {
             <View style={gameComponentStyles.boardContainer}>
                 <CenterCircle char_set={char_set} />
                 {players.map((player, idx) => (
-                    <PlayerCircle key={idx} player={player} idx={idx} total={players.length} current_turn={current_turn} />
+                    <PlayerCircle key={player.user_id} player={player} idx={idx} total={players.length} isCurrentTurn={current_turn === player.user_id} typing_text={typing_text} />
                 ))}
             </View>
         </View>

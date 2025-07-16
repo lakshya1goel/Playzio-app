@@ -1,4 +1,5 @@
 export interface AuthState {
+    user_id: number | null;
     name: string;
     email: string | null;
     profile_pic: string | null;

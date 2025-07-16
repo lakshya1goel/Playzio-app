@@ -39,6 +39,7 @@ export interface Member {
     ID: number;
     room_id: number;
     user_id: number;
+    user_name: string;
     user: User;
     guest_id: string;
     guest_name: string;
