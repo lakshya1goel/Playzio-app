@@ -12,6 +12,8 @@ const ChatComponent = () => {
     const { user_id } = useSelector((state: RootState) => state.auth);
 
     const isMyTurn = user_id === current_turn;
+    console.log("user_id", user_id);
+    console.log("current_turn", current_turn);
 
     return (
         <View style={chatComponentStyles.outerContainer}>
@@ -22,17 +24,18 @@ const ChatComponent = () => {
                 value={message}
                 onChangeText={(text) => {
                     setMessage(text);
-                    if (text.trim().length > 0) {
+                    if (text.trim().length > 0 && isMyTurn) {
                         gameWs.typing(text);
                     }
                 }}
                 onSubmitEditing={() => {
-                    if (message.trim().length > 0) {
+                    if (message.trim().length > 0 && isMyTurn) {
                         gameWs.answer(message);
                         setMessage('');
                     }
                 }}
                 returnKeyType="send"
+                editable={isMyTurn}
             />
             <View style={chatComponentStyles.innerContainer}>
                 <FlatList

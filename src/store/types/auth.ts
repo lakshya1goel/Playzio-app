@@ -28,7 +28,7 @@ export interface GuestLoginResponse {
 }
 
 export interface User {
-    ID: number;
+    id: number;
     name: string;
     email: string;
     profile_pic: string;
