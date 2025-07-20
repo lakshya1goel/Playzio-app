@@ -51,7 +51,12 @@ export const gameSlice = createSlice({
             state.winner_id = action.payload;
         },
         addPlayer: (state, action) => {
-            state.players.push(action.payload);
+            const existingPlayer = state.players.find(player => player.user_id === action.payload.user_id);
+            if (!existingPlayer) {
+                state.players.push(action.payload);
+            } else {
+                console.log('Player already exists:', action.payload.user_name);
+            }
         },
         removePlayer: (state, action) => {
             state.players = state.players.filter(player => player.user_id !== action.payload);

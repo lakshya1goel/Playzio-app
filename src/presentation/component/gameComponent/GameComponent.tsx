@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, Modal, TouchableOpacity } from 'react-native';
 import player1 from '@assets/images/player1.png';
 import player2 from '@assets/images/player2.png';
 import player3 from '@assets/images/player3.png';
@@ -17,6 +17,9 @@ import gameWs from '@/service/GameWebsocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import { addPlayer, removePlayer, setAnswerStatus, setCharSet, setCurrentTurn, setLives, setRound, setScore, setTimeLimit, setTypingText, setWinnerId } from '@/store/slices/gameSlice';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '@type';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
@@ -89,6 +92,9 @@ const CenterCircle = ({char_set}: {char_set: string}) => (
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
+    const [gameOverModalVisible, setGameOverModalVisible] = useState(false);
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+    const [winnerName, setWinnerName] = useState('');
 
     useEffect(() => {
         const handleUserJoined = (message: any) => {
@@ -138,7 +144,6 @@ const GameComponent = () => {
                 dispatch(setAnswerStatus(null));
                 dispatch(setLives({user_id: message.user_id || message.payload.user_id, lives: message.payload.lives_left}));
                 dispatch(setScore({user_id: message.user_id || message.payload.user_id, score: message.payload.score}));
-                dispatch(setCharSet(message.payload.char_set));
                 dispatch(setRound(message.payload.round));
             }
         };
@@ -161,6 +166,9 @@ const GameComponent = () => {
 
             if (message.type === 'game_over') {
                 dispatch(setWinnerId(message.payload.winner_id));
+                setGameOverModalVisible(true);
+                const winner = players.find(player => player.user_id === message.payload.winner_id);
+                setWinnerName(winner ? winner.user_name : 'Unknown');
             }
         };
 
@@ -184,14 +192,61 @@ const GameComponent = () => {
     }, [dispatch]);
 
     return (
-        <View style={gameComponentStyles.outerContainer}>
-            <View style={gameComponentStyles.boardContainer}>
-                <CenterCircle char_set={char_set} />
-                {players.map((player, idx) => (
-                    <PlayerCircle key={player.user_id} player={player} idx={idx} total={players.length} isCurrentTurn={current_turn === player.user_id} typing_text={typing_text} />
-                ))}
+        <>
+        {gameOverModalVisible && (
+            <Modal
+                visible={gameOverModalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setGameOverModalVisible(false)}
+            >
+                <View style={{
+                    flex: 1,
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <View style={{
+                        backgroundColor: '#fff',
+                        borderRadius: 12,
+                        padding: 24,
+                        alignItems: 'center',
+                        minWidth: 250
+                    }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 12 }}>Game Over</Text>
+                        <Text style={{ fontSize: 18, marginBottom: 24 }}>
+                            Winner: <Text style={{ fontWeight: 'bold', color: '#4A0E72' }}>{winnerName}</Text>
+                        </Text>
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: '#4A0E72',
+                                paddingVertical: 10,
+                                paddingHorizontal: 32,
+                                borderRadius: 8
+                            }}
+                            onPress={() => {
+                                setGameOverModalVisible(false);
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'RoomChoice' }],
+                                });
+                            }}
+                        >
+                            <Text style={{ color: '#fff', fontSize: 16 }}>Home</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        )}
+            <View style={gameComponentStyles.outerContainer}>
+                <View style={gameComponentStyles.boardContainer}>
+                    <CenterCircle char_set={char_set} />
+                    {players.map((player, idx) => (
+                        <PlayerCircle key={player.user_id} player={player} idx={idx} total={players.length} isCurrentTurn={current_turn === player.user_id} typing_text={typing_text} />
+                    ))}
+                </View>
             </View>
-        </View>
+        </>
     );  
 };
 
