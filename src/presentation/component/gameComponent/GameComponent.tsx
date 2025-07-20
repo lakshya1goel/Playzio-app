@@ -91,7 +91,7 @@ const CenterCircle = ({char_set}: {char_set: string}) => (
 
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { players, current_turn, char_set, typing_text, winner_id } = useSelector((state: RootState) => state.game);
+    const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
     const [gameOverModalVisible, setGameOverModalVisible] = useState(false);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [winnerName, setWinnerName] = useState('');
