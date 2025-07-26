@@ -6,6 +6,7 @@ export interface GameUser {
 }
 
 export interface GameState {
+    roomId: number | null;
     current_turn: number;
     round: number;
     time_limit: number;
