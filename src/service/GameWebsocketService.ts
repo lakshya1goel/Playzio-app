@@ -1,5 +1,7 @@
 import AuthService from './AuthService';
 import EventEmitter from 'eventemitter3';
+import { store } from '@/store';
+import { MESSAGE_TYPES, GameMessage, JoinPayload, AnswerPayload, TypingPayload, PongPayload } from '@/store/types/websocket';
 
 class GameWebSocketService extends EventEmitter {
     private socket: WebSocket | null = null;
@@ -49,12 +51,13 @@ class GameWebSocketService extends EventEmitter {
                     const data = JSON.parse(event.data);
                     console.log('Received message:', data);
                     
-                    if (data.type === 'ping') {
+                    if (data.type === MESSAGE_TYPES.PING) {
                         this.handlePing(data);
                         return;
                     }
                     
-                    if (!data.room_id || data.room_id === this.roomId) {
+                    const messageRoomId = data.payload?.room_id;
+                    if (!messageRoomId || messageRoomId === this.roomId) {
                         this.emit(data.type, data);
                     }
                 } catch (e) {
@@ -107,11 +110,11 @@ class GameWebSocketService extends EventEmitter {
 
     private handlePing = (pingMessage: any) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
-            const pongMessage = {
-                type: 'pong',
+            const pongMessage: GameMessage = {
+                type: MESSAGE_TYPES.PONG,
                 payload: {
                     timestamp: pingMessage.payload.timestamp,
-                },
+                } as PongPayload,
             };
             this.socket.send(JSON.stringify(pongMessage));
         }
@@ -120,14 +123,13 @@ class GameWebSocketService extends EventEmitter {
     joinRoom = (roomId: number) => {
         this.roomId = roomId;
         if (this.socket?.readyState === WebSocket.OPEN) {
-            const message = JSON.stringify({
-                type: 'join',
-                room_id: roomId,
+            const message: GameMessage = {
+                type: MESSAGE_TYPES.JOIN,
                 payload: {
-                    "message": "Joining group",
-                },
-            });
-            this.socket.send(message);
+                    room_id: roomId,
+                } as JoinPayload,
+            };
+            this.socket.send(JSON.stringify(message));
         } else {
             console.log('WebSocket not open. Cannot join group.');
         }
@@ -135,14 +137,13 @@ class GameWebSocketService extends EventEmitter {
 
     answer = (content: string) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
-            const message = JSON.stringify({
-                type: 'answer',
-                room_id: this.roomId,
+            const message: GameMessage = {
+                type: MESSAGE_TYPES.ANSWER,
                 payload: {
-                    "answer": content,
-                },
-            });
-            this.socket.send(message);
+                    answer: content,
+                } as AnswerPayload,
+            };
+            this.socket.send(JSON.stringify(message));
         } else {
             console.log('WebSocket not open. Cannot send message.');
         }
@@ -154,14 +155,13 @@ class GameWebSocketService extends EventEmitter {
                 console.log('No group joined.');
                 return;
             }
-            const message = JSON.stringify({
-                type: 'leave',
-                room_id: this.roomId,
+            const message: GameMessage = {
+                type: MESSAGE_TYPES.LEAVE,
                 payload: {
-                    "message": "Leaving room",
+                    room_id: this.roomId,
                 },
-            });
-            this.socket.send(message);
+            };
+            this.socket.send(JSON.stringify(message));
             console.log(`Leaving room ${this.roomId}`);
             this.roomId = null;
         } else {
@@ -171,14 +171,18 @@ class GameWebSocketService extends EventEmitter {
 
     typing = (content: string) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
-            const message = JSON.stringify({
-                type: 'typing',
-                room_id: this.roomId,
+            const state = store.getState();
+            const userId = state.auth.user_id;
+            
+            const message: GameMessage = {
+                type: MESSAGE_TYPES.TYPING,
                 payload: {
-                    "text": content,
-                },
-            });
-            this.socket.send(message);
+                    text: content,
+                    room_id: this.roomId!,
+                    user_id: userId!,
+                } as TypingPayload,
+            };
+            this.socket.send(JSON.stringify(message));
         } else {
             console.log('WebSocket not open. Cannot send typing.');
         }

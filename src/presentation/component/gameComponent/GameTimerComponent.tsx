@@ -2,41 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import gameWs from '@/service/GameWebsocketService';
 import { gameTimerComponentStyles } from './GameTimerComponent.styles';
-import { setCharSet, setCurrentTurn, setRound, setTimeLimit } from '@/store/slices/gameSlice';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store';
+import { startGame, timerStarted } from '@/store/slices/gameSlice';
+import { MESSAGE_TYPES } from '@/store/types/websocket';
 
 const GameTimerComponent = () => {
     const [timer, setTimer] = useState(0);
     const [isTimerActive, setIsTimerActive] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
+    const { roomId } = useSelector((state: RootState) => state.game);
 
     useEffect(() => {
         const handleTimerStarted = (message: any) => {
             console.log('Timer started:', message);
-            const duration = message.payload?.duration || 120;
-            setTimer(duration);
-            setIsTimerActive(true);
+            
+            if (message.payload.room_id === roomId) {
+                const duration = message.payload.duration;
+                setTimer(duration);
+                setIsTimerActive(true);
+                dispatch(timerStarted(message.payload));
+            }
         };
 
         const handleGameStart = (message: any) => {
             console.log('Game started:', message);
-            setIsTimerActive(false);
-            setTimer(0);
-            dispatch(setCurrentTurn(message.payload?.current_turn || 0));
-            dispatch(setRound(message.payload?.round || 0));
-            dispatch(setTimeLimit(message.payload?.time_limit || 0));
-            dispatch(setCharSet(message.payload?.char_set || []));
+            
+            if (message.payload.room_id === roomId) {
+                setIsTimerActive(false);
+                setTimer(0);
+                dispatch(startGame(message.payload));
+            }
         };
 
-        gameWs.on('timer_started', handleTimerStarted);
-        gameWs.on('start_game', handleGameStart);
+        gameWs.on(MESSAGE_TYPES.TIMER_STARTED, handleTimerStarted);
+        gameWs.on(MESSAGE_TYPES.START_GAME, handleGameStart);
 
         return () => {
-            gameWs.off('timer_started', handleTimerStarted);
-            gameWs.off('start_game', handleGameStart);
+            gameWs.off(MESSAGE_TYPES.TIMER_STARTED, handleTimerStarted);
+            gameWs.off(MESSAGE_TYPES.START_GAME, handleGameStart);
         };
-    }, []);
+    }, [dispatch, roomId]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;

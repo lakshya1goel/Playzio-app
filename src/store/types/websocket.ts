@@ -19,6 +19,14 @@ export const MESSAGE_TYPES = {
     PONG: 'pong',
 } as const;
 
+export interface JoinPayload {
+    room_id: number;
+}
+
+export interface AnswerPayload {
+    answer: string;
+}
+
 export interface AnswerResponsePayload {
     correct: boolean;
     answer: string;
@@ -42,7 +50,6 @@ export interface TimerStartedPayload {
 
 export interface StartGamePayload {
     room_id: number;
-    message: string;
     char_set: string;
     round: number;
     time_limit: number;
@@ -51,15 +58,22 @@ export interface StartGamePayload {
 export interface UserJoinedPayload {
     user_id: number;
     user_name: string;
-    message: string;
     room_id: number;
 }
 
 export interface UserLeftPayload {
     user_id: number;
     user_name: string;
-    message: string;
     room_id: number;
+}
+
+export interface PingPayload {
+    timestamp: number;
+    ping_id?: number;
+}
+
+export interface PongPayload {
+    timestamp: number;
 }
 
 export interface GameOverPayload {
@@ -83,13 +97,4 @@ export interface TurnEndedPayload {
     lives_left: number;
     round: number;
     score: number;
-}
-
-export interface PingPayload {
-    timestamp: number;
-    ping_id: number;
-}
-
-export interface PongPayload {
-    timestamp: number;
 }
