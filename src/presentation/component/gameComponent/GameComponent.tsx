@@ -114,7 +114,7 @@ const GameComponent = () => {
             console.log('User left:', message);
             
             if (message.type === 'user_left' || message.type === 'leave') {
-                const userId = message.payload?.user_id || message.user_id;
+                const userId = message.payload?.user_id;
                 dispatch(removePlayer(userId));
             }
         };
@@ -142,8 +142,8 @@ const GameComponent = () => {
             if (message.type === 'turn_ended') {
                 dispatch(setTypingText(''));
                 dispatch(setAnswerStatus(null));
-                dispatch(setLives({user_id: message.user_id || message.payload.user_id, lives: message.payload.lives_left}));
-                dispatch(setScore({user_id: message.user_id || message.payload.user_id, score: message.payload.score}));
+                dispatch(setLives({user_id: message.payload.user_id, lives: message.payload.lives_left}));
+                dispatch(setScore({user_id: message.payload.user_id, score: message.payload.score}));
                 dispatch(setRound(message.payload.round));
             }
         };

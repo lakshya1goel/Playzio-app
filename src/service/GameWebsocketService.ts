@@ -122,9 +122,8 @@ class GameWebSocketService extends EventEmitter {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: 'join',
-                room_id: roomId,
                 payload: {
-                    "message": "Joining group",
+                    "room_id": roomId,
                 },
             });
             this.socket.send(message);
@@ -137,8 +136,8 @@ class GameWebSocketService extends EventEmitter {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: 'answer',
-                room_id: this.roomId,
                 payload: {
+                    "room_id": this.roomId,
                     "answer": content,
                 },
             });
@@ -156,9 +155,8 @@ class GameWebSocketService extends EventEmitter {
             }
             const message = JSON.stringify({
                 type: 'leave',
-                room_id: this.roomId,
                 payload: {
-                    "message": "Leaving room",
+                    "room_id": this.roomId,
                 },
             });
             this.socket.send(message);
@@ -173,8 +171,8 @@ class GameWebSocketService extends EventEmitter {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: 'typing',
-                room_id: this.roomId,
                 payload: {
+                    "room_id": this.roomId,
                     "text": content,
                 },
             });
