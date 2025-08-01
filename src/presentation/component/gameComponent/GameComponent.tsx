@@ -100,61 +100,40 @@ const GameComponent = () => {
     useEffect(() => {
         const handleUserJoined = (message: any) => {
             console.log('User joined:', message);
-            
-            if (message.type === MESSAGE_TYPES.USER_JOINED) {
-                dispatch(handleUserJoinedMessage(message.payload));
-            }
+            dispatch(handleUserJoinedMessage(message.payload));
         };
 
         const handleUserLeft = (message: any) => {
             console.log('User left:', message);
-            
-            if (message.type === MESSAGE_TYPES.USER_LEFT || message.type === MESSAGE_TYPES.LEAVE) {
-                dispatch(handleUserLeftMessage(message.payload));
-            }
+            dispatch(handleUserLeftMessage(message.payload));
         };
 
         const handleTyping = (message: any) => {
             console.log('Typing:', message);
-
-            if (message.type === MESSAGE_TYPES.TYPING) {
-                dispatch(handleTypingMessage(message.payload));
-            }
+            dispatch(handleTypingMessage(message.payload));
         };
 
         const handleAnswer = (message: any) => {
             console.log('Answer:', message);
-
-            if (message.type === MESSAGE_TYPES.ANSWER) {
-                dispatch(handleAnswerMessage(message.payload));
-            }
+            dispatch(handleAnswerMessage(message.payload));
         };
 
         const handleTurnEnd = (message: any) => {
             console.log('Turn end:', message);
-
-            if (message.type === MESSAGE_TYPES.TURN_ENDED) {
-                dispatch(handleTurnEndMessage(message.payload));
-            }
+            dispatch(handleTurnEndMessage(message.payload));
         };
 
         const handleNextTurn = (message: any) => {
             console.log('Next turn:', message);
-
-            if (message.type === MESSAGE_TYPES.NEXT_TURN) {
-                dispatch(handleNextTurnMessage(message.payload));
-            }
+            dispatch(handleNextTurnMessage(message.payload));
         };
 
         const handleGameOver = (message: any) => {
             console.log('Game over:', message);
-
-            if (message.type === MESSAGE_TYPES.GAME_OVER) {
-                dispatch(handleGameOverMessage(message.payload));
-                setGameOverModalVisible(true);
-                const winner = players.find(player => player.user_id === message.payload.winner_id);
-                setWinnerName(winner ? winner.user_name : 'Unknown');
-            }
+            dispatch(handleGameOverMessage(message.payload));
+            setGameOverModalVisible(true);
+            const winner = players.find(player => player.user_id === message.payload.winner_id);
+            setWinnerName(winner ? winner.user_name : 'Unknown');
         };
 
         gameWs.on(MESSAGE_TYPES.USER_JOINED, handleUserJoined);
