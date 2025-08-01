@@ -23,55 +23,63 @@ export const gameSlice = createSlice({
             state.char_set = initialState.char_set;
             state.players = initialState.players;
         },
-        setCurrentTurn: (state, action) => {
-            state.current_turn = action.payload;
-        },
-        setRound: (state, action) => {
-            state.round = action.payload;
-        },
-        setTimeLimit: (state, action) => {
-            state.time_limit = action.payload;
-        },
-        setCharSet: (state, action) => {
-            state.char_set = action.payload;
-        },
-        setLives: (state, action) => {
-            state.players = state.players.map(player => ({
-                ...player,
-                lives: player.user_id === action.payload.user_id ? action.payload.lives : player.lives
-            }));
-        },
-        setScore: (state, action) => {
-            state.players = state.players.map(player => ({
-                ...player,
-                score: player.user_id === action.payload.user_id ? action.payload.score : player.score
-            }));
-        },
-        setWinnerId: (state, action) => {
-            state.winner_id = action.payload;
-        },
-        addPlayer: (state, action) => {
-            const existingPlayer = state.players.find(player => player.user_id === action.payload.user_id);
-            if (!existingPlayer) {
-                state.players.push(action.payload);
-            } else {
-                console.log('Player already exists:', action.payload.user_name);
-            }
-        },
-        removePlayer: (state, action) => {
-            state.players = state.players.filter(player => player.user_id !== action.payload);
-        },
         setPlayers: (state, action) => {
             state.players = action.payload;
         },
-        setTypingText: (state, action) => {
-            state.typing_text = action.payload;
+        handleUserJoinedMessage: (state, action) => {
+            const { user_id, user_name } = action.payload;
+            const existingPlayer = state.players.find(player => player.user_id === user_id);
+            if (!existingPlayer) {
+                state.players.push({ user_id, user_name, lives: 3, score: 0 });
+            } else {
+                console.log('Player already exists:', user_name);
+            }
         },
-        setAnswerStatus: (state, action) => {
-            state.is_answer_correct = action.payload;
-        }
+        handleUserLeftMessage: (state, action) => {
+            const { user_id } = action.payload;
+            state.players = state.players.filter(player => player.user_id !== user_id);
+        },
+        handleTypingMessage: (state, action) => {
+            state.typing_text = action.payload.text;
+        },
+        handleAnswerMessage: (state, action) => {
+            const { answer, correct } = action.payload;
+            state.is_answer_correct = correct;
+            state.typing_text = answer;
+        },
+        handleTurnEndMessage: (state, action) => {
+            const { user_id, lives, score, round } = action.payload;
+            state.players = state.players.map(player => ({
+                ...player,
+                lives: player.user_id === user_id ? lives : player.lives,
+                score: player.user_id === user_id ? score : player.score,
+            }));
+            state.round = round;
+            state.typing_text = '';
+            state.is_answer_correct = null;
+        },
+        handleNextTurnMessage: (state, action) => {
+            const { user_id, char_set, round, time_limit } = action.payload;
+            state.current_turn = user_id;
+            state.char_set = char_set;
+            state.round = round;
+            state.time_limit = time_limit;
+            state.typing_text = '';
+            state.is_answer_correct = null;
+        },
+        handleGameOverMessage: (state, action) => {
+            const { winner_id } = action.payload;
+            state.winner_id = winner_id;
+        },
+        handleGameStartMessage: (state, action) => {
+            const { round, time_limit, char_set } = action.payload;
+            state.current_turn = state.players[0].user_id;
+            state.round = round;
+            state.time_limit = time_limit;
+            state.char_set = char_set;
+        },
     },
 });
 
 export default gameSlice.reducer;
-export const { resetGameState, setCurrentTurn, setRound, setTimeLimit, setCharSet, setLives, setScore, setWinnerId, addPlayer, removePlayer, setPlayers, setTypingText, setAnswerStatus } = gameSlice.actions;
+export const { resetGameState, setPlayers, handleUserJoinedMessage, handleUserLeftMessage, handleTypingMessage, handleAnswerMessage, handleTurnEndMessage, handleNextTurnMessage, handleGameOverMessage, handleGameStartMessage } = gameSlice.actions;

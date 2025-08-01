@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import gameWs from '@/service/GameWebsocketService';
 import { gameTimerComponentStyles } from './GameTimerComponent.styles';
-import { setCharSet, setCurrentTurn, setRound, setTimeLimit } from '@/store/slices/gameSlice';
+import { handleGameStartMessage } from '@/store/slices/gameSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { MESSAGE_TYPES } from '@/store/types/websocket';
@@ -24,10 +24,7 @@ const GameTimerComponent = () => {
             console.log('Game started:', message);
             setIsTimerActive(false);
             setTimer(0);
-            dispatch(setCurrentTurn(message.payload?.current_turn || 0));
-            dispatch(setRound(message.payload?.round || 0));
-            dispatch(setTimeLimit(message.payload?.time_limit || 0));
-            dispatch(setCharSet(message.payload?.char_set || []));
+            dispatch(handleGameStartMessage(message.payload));
         };
 
         gameWs.on(MESSAGE_TYPES.TIMER_STARTED, handleTimerStarted);

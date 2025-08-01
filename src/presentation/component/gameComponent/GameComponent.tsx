@@ -16,7 +16,7 @@ import { GameUser } from '@/store/types/game';
 import gameWs from '@/service/GameWebsocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
-import { addPlayer, removePlayer, setAnswerStatus, setCharSet, setCurrentTurn, setLives, setRound, setScore, setTimeLimit, setTypingText, setWinnerId } from '@/store/slices/gameSlice';
+import { handleUserJoinedMessage, handleUserLeftMessage, handleTypingMessage, handleAnswerMessage, handleTurnEndMessage, handleNextTurnMessage, handleGameOverMessage } from '@/store/slices/gameSlice';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@type';
@@ -102,12 +102,7 @@ const GameComponent = () => {
             console.log('User joined:', message);
             
             if (message.type === MESSAGE_TYPES.USER_JOINED) {
-                const newUser: GameUser = {
-                    user_id: message.payload.user_id,
-                    user_name: message.payload.user_name,
-                    lives: 3,
-                };
-                dispatch(addPlayer(newUser));
+                dispatch(handleUserJoinedMessage(message.payload));
             }
         };
 
@@ -115,8 +110,7 @@ const GameComponent = () => {
             console.log('User left:', message);
             
             if (message.type === MESSAGE_TYPES.USER_LEFT || message.type === MESSAGE_TYPES.LEAVE) {
-                const userId = message.payload?.user_id;
-                dispatch(removePlayer(userId));
+                dispatch(handleUserLeftMessage(message.payload));
             }
         };
 
@@ -124,7 +118,7 @@ const GameComponent = () => {
             console.log('Typing:', message);
 
             if (message.type === MESSAGE_TYPES.TYPING) {
-                dispatch(setTypingText(message.payload.text));
+                dispatch(handleTypingMessage(message.payload));
             }
         };
 
@@ -132,8 +126,7 @@ const GameComponent = () => {
             console.log('Answer:', message);
 
             if (message.type === MESSAGE_TYPES.ANSWER) {
-                dispatch(setTypingText(message.payload.answer));
-                dispatch(setAnswerStatus(message.payload.correct));
+                dispatch(handleAnswerMessage(message.payload));
             }
         };
 
@@ -141,11 +134,7 @@ const GameComponent = () => {
             console.log('Turn end:', message);
 
             if (message.type === MESSAGE_TYPES.TURN_ENDED) {
-                dispatch(setTypingText(''));
-                dispatch(setAnswerStatus(null));
-                dispatch(setLives({user_id: message.payload.user_id, lives: message.payload.lives_left}));
-                dispatch(setScore({user_id: message.payload.user_id, score: message.payload.score}));
-                dispatch(setRound(message.payload.round));
+                dispatch(handleTurnEndMessage(message.payload));
             }
         };
 
@@ -153,12 +142,7 @@ const GameComponent = () => {
             console.log('Next turn:', message);
 
             if (message.type === MESSAGE_TYPES.NEXT_TURN) {
-                dispatch(setCurrentTurn(message.payload.user_id));
-                dispatch(setTypingText(''));
-                dispatch(setAnswerStatus(null));
-                dispatch(setCharSet(message.payload.char_set));
-                dispatch(setRound(message.payload.round));
-                dispatch(setTimeLimit(message.payload.time_limit));
+                dispatch(handleNextTurnMessage(message.payload));
             }
         };
 
@@ -166,7 +150,7 @@ const GameComponent = () => {
             console.log('Game over:', message);
 
             if (message.type === MESSAGE_TYPES.GAME_OVER) {
-                dispatch(setWinnerId(message.payload.winner_id));
+                dispatch(handleGameOverMessage(message.payload));
                 setGameOverModalVisible(true);
                 const winner = players.find(player => player.user_id === message.payload.winner_id);
                 setWinnerName(winner ? winner.user_name : 'Unknown');
