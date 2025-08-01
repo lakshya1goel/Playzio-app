@@ -5,6 +5,7 @@ import { gameTimerComponentStyles } from './GameTimerComponent.styles';
 import { setCharSet, setCurrentTurn, setRound, setTimeLimit } from '@/store/slices/gameSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
+import { MESSAGE_TYPES } from '@/store/types/websocket';
 
 const GameTimerComponent = () => {
     const [timer, setTimer] = useState(0);
@@ -29,12 +30,12 @@ const GameTimerComponent = () => {
             dispatch(setCharSet(message.payload?.char_set || []));
         };
 
-        gameWs.on('timer_started', handleTimerStarted);
-        gameWs.on('start_game', handleGameStart);
+        gameWs.on(MESSAGE_TYPES.TIMER_STARTED, handleTimerStarted);
+        gameWs.on(MESSAGE_TYPES.START_GAME, handleGameStart);
 
         return () => {
-            gameWs.off('timer_started', handleTimerStarted);
-            gameWs.off('start_game', handleGameStart);
+            gameWs.off(MESSAGE_TYPES.TIMER_STARTED, handleTimerStarted);
+            gameWs.off(MESSAGE_TYPES.START_GAME, handleGameStart);
         };
     }, []);
 

@@ -1,3 +1,4 @@
+import { MESSAGE_TYPES } from '@/store/types/websocket';
 import AuthService from './AuthService';
 import EventEmitter from 'eventemitter3';
 
@@ -49,7 +50,7 @@ class GameWebSocketService extends EventEmitter {
                     const data = JSON.parse(event.data);
                     console.log('Received message:', data);
                     
-                    if (data.type === 'ping') {
+                    if (data.type === MESSAGE_TYPES.PING) {
                         this.handlePing(data);
                         return;
                     }
@@ -108,7 +109,7 @@ class GameWebSocketService extends EventEmitter {
     private handlePing = (pingMessage: any) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const pongMessage = {
-                type: 'pong',
+                type: MESSAGE_TYPES.PONG,
                 payload: {
                     timestamp: pingMessage.payload.timestamp,
                 },
@@ -121,7 +122,7 @@ class GameWebSocketService extends EventEmitter {
         this.roomId = roomId;
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
-                type: 'join',
+                type: MESSAGE_TYPES.JOIN,
                 payload: {
                     "room_id": roomId,
                 },
@@ -135,7 +136,7 @@ class GameWebSocketService extends EventEmitter {
     answer = (content: string) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
-                type: 'answer',
+                type: MESSAGE_TYPES.ANSWER,
                 payload: {
                     "room_id": this.roomId,
                     "answer": content,
@@ -154,7 +155,7 @@ class GameWebSocketService extends EventEmitter {
                 return;
             }
             const message = JSON.stringify({
-                type: 'leave',
+                type: MESSAGE_TYPES.LEAVE,
                 payload: {
                     "room_id": this.roomId,
                 },
@@ -170,7 +171,7 @@ class GameWebSocketService extends EventEmitter {
     typing = (content: string) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
-                type: 'typing',
+                type: MESSAGE_TYPES.TYPING,
                 payload: {
                     "room_id": this.roomId,
                     "text": content,
