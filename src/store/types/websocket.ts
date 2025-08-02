@@ -16,3 +16,12 @@ export const MESSAGE_TYPES = {
     DISCONNECTED: 'disconnected',
     ERROR: 'error',
 } as const;
+
+export const CHAT_MESSAGE_TYPES = {
+    JOIN: 'join-room',
+    LEAVE: 'leave-room',
+    CHAT_CONTENT: 'chat-content',
+    CONNECTED: 'connected',
+    DISCONNECTED: 'disconnected',
+    ERROR: 'error',
+} as const;
