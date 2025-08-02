@@ -25,3 +25,14 @@ export const CHAT_MESSAGE_TYPES = {
     DISCONNECTED: 'disconnected',
     ERROR: 'error',
 } as const;
+
+export interface Message {
+    ID: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    type: string;
+    body: string;
+    sender: number;
+    room_id: number;
+}

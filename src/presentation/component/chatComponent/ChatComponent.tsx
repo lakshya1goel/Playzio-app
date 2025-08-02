@@ -5,15 +5,35 @@ import { chatComponentStyles } from './ChatComponent.styles';
 import gameWs from '@/service/GameWebsocketService';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
+import { CHAT_MESSAGE_TYPES, Message } from '@/store/types/websocket';
+import chatWs from '@/service/ChatWebsocketService';
 
 const ChatComponent = () => {
     const [message, setMessage] = useState<string>('');
     const { current_turn } = useSelector((state: RootState) => state.game);
     const { user_id } = useSelector((state: RootState) => state.auth);
+    const { room } = useSelector((state: RootState) => state.room);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     const isMyTurn = user_id === current_turn;
-    console.log("user_id", user_id);
-    console.log("current_turn", current_turn);
+
+    const handleSendMessage = () => {
+        if (message.trim().length > 0 && !isMyTurn) {
+            const tempMessage = {
+                ID: Date.now().toString(),
+                CreatedAt: new Date().toISOString(),
+                UpdatedAt: new Date().toISOString(),
+                DeletedAt: null,
+                type: CHAT_MESSAGE_TYPES.CHAT_CONTENT,
+                body: message,
+                sender: user_id,
+                room_id: room?.ID,
+            };
+            setMessages([...messages, tempMessage as Message]);
+            chatWs.sendMessage(JSON.stringify(tempMessage));
+            setMessage('');
+        }
+    };
 
     return (
         <View style={chatComponentStyles.outerContainer}>
@@ -33,28 +53,31 @@ const ChatComponent = () => {
                         gameWs.answer(message);
                         setMessage('');
                     }
+                    if (message.trim().length > 0 && !isMyTurn) {
+                        handleSendMessage();
+                    }
                 }}
                 returnKeyType="send"
                 editable={isMyTurn}
             />
             <View style={chatComponentStyles.innerContainer}>
                 <FlatList
-                    data={['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5', 'Member 6', 'Member 7', 'Member 8', 'Member 9', 'Member 10']}
+                    data={room?.members}
                     renderItem={({ item }) => (
                         <View style={chatComponentStyles.itemContainer}>
-                            <Text style={chatComponentStyles.itemText}>{item}</Text>
+                            <Text style={chatComponentStyles.itemText}>{item.user_name}</Text>
                         </View>
                     )}
-                    keyExtractor={(item, index) => index.toString()}
+                    keyExtractor={(item) => item.ID.toString()}
                     showsVerticalScrollIndicator={false}
                 />
                 <View style={chatComponentStyles.chatContainer}>
                     <FlatList
-                        data={['Message 1', 'Message 2', 'Message 3', 'Message 4', 'Message 5', 'Message 6', 'Message 7', 'Message 8', 'Message 9', 'Message 10']}
+                        data={messages}
                         renderItem={({ item }) => (
-                            <Text style={chatComponentStyles.chatText}>{item}</Text>
+                            <Text style={chatComponentStyles.chatText}>{item.body}</Text>
                         )}
-                        keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item) => item.ID}
                         showsVerticalScrollIndicator={false}
                     />
                 </View>
