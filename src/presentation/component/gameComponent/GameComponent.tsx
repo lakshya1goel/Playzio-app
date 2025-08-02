@@ -16,10 +16,11 @@ import { GameUser } from '@/store/types/game';
 import gameWs from '@/service/GameWebsocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
-import { addPlayer, removePlayer, setAnswerStatus, setCharSet, setCurrentTurn, setLives, setRound, setScore, setTimeLimit, setTypingText, setWinnerId } from '@/store/slices/gameSlice';
+import { handleUserJoinedMessage, handleUserLeftMessage, handleTypingMessage, handleAnswerMessage, handleTurnEndMessage, handleNextTurnMessage, handleGameOverMessage } from '@/store/slices/gameSlice';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@type';
+import { MESSAGE_TYPES } from '@/store/types/websocket';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
@@ -99,95 +100,58 @@ const GameComponent = () => {
     useEffect(() => {
         const handleUserJoined = (message: any) => {
             console.log('User joined:', message);
-            
-            if (message.type === 'user_joined') {
-                const newUser: GameUser = {
-                    user_id: message.payload.user_id,
-                    user_name: message.payload.user_name,
-                    lives: 3,
-                };
-                dispatch(addPlayer(newUser));
-            }
+            dispatch(handleUserJoinedMessage(message.payload));
         };
 
         const handleUserLeft = (message: any) => {
             console.log('User left:', message);
-            
-            if (message.type === 'user_left' || message.type === 'leave') {
-                const userId = message.payload?.user_id || message.user_id;
-                dispatch(removePlayer(userId));
-            }
+            dispatch(handleUserLeftMessage(message.payload));
         };
 
         const handleTyping = (message: any) => {
             console.log('Typing:', message);
-
-            if (message.type === 'typing') {
-                dispatch(setTypingText(message.payload.text));
-            }
+            dispatch(handleTypingMessage(message.payload));
         };
 
         const handleAnswer = (message: any) => {
             console.log('Answer:', message);
-
-            if (message.type === 'answer') {
-                dispatch(setTypingText(message.payload.answer));
-                dispatch(setAnswerStatus(message.payload.correct));
-            }
+            dispatch(handleAnswerMessage(message.payload));
         };
 
         const handleTurnEnd = (message: any) => {
             console.log('Turn end:', message);
-
-            if (message.type === 'turn_ended') {
-                dispatch(setTypingText(''));
-                dispatch(setAnswerStatus(null));
-                dispatch(setLives({user_id: message.user_id || message.payload.user_id, lives: message.payload.lives_left}));
-                dispatch(setScore({user_id: message.user_id || message.payload.user_id, score: message.payload.score}));
-                dispatch(setRound(message.payload.round));
-            }
+            dispatch(handleTurnEndMessage(message.payload));
         };
 
         const handleNextTurn = (message: any) => {
             console.log('Next turn:', message);
-
-            if (message.type === 'next_turn') {
-                dispatch(setCurrentTurn(message.payload.user_id));
-                dispatch(setTypingText(''));
-                dispatch(setAnswerStatus(null));
-                dispatch(setCharSet(message.payload.char_set));
-                dispatch(setRound(message.payload.round));
-                dispatch(setTimeLimit(message.payload.time_limit));
-            }
+            dispatch(handleNextTurnMessage(message.payload));
         };
 
         const handleGameOver = (message: any) => {
             console.log('Game over:', message);
-
-            if (message.type === 'game_over') {
-                dispatch(setWinnerId(message.payload.winner_id));
-                setGameOverModalVisible(true);
-                const winner = players.find(player => player.user_id === message.payload.winner_id);
-                setWinnerName(winner ? winner.user_name : 'Unknown');
-            }
+            dispatch(handleGameOverMessage(message.payload));
+            setGameOverModalVisible(true);
+            const winner = players.find(player => player.user_id === message.payload.winner_id);
+            setWinnerName(winner ? winner.user_name : 'Unknown');
         };
 
-        gameWs.on('user_joined', handleUserJoined);
-        gameWs.on('user_left', handleUserLeft);
-        gameWs.on('leave', handleUserLeft);
-        gameWs.on('typing', handleTyping);
-        gameWs.on('answer', handleAnswer);
-        gameWs.on('turn_ended', handleTurnEnd);
-        gameWs.on('next_turn', handleNextTurn);
-        gameWs.on('game_over', handleGameOver);
+        gameWs.on(MESSAGE_TYPES.USER_JOINED, handleUserJoined);
+        gameWs.on(MESSAGE_TYPES.USER_LEFT, handleUserLeft);
+        gameWs.on(MESSAGE_TYPES.TYPING, handleTyping);
+        gameWs.on(MESSAGE_TYPES.ANSWER, handleAnswer);
+        gameWs.on(MESSAGE_TYPES.TURN_ENDED, handleTurnEnd);
+        gameWs.on(MESSAGE_TYPES.NEXT_TURN, handleNextTurn);
+        gameWs.on(MESSAGE_TYPES.GAME_OVER, handleGameOver);
 
         return () => {
-            gameWs.off('user_joined', handleUserJoined);
-            gameWs.off('user_left', handleUserLeft);
-            gameWs.off('leave', handleUserLeft);
-            gameWs.off('typing', handleTyping);
-            gameWs.off('answer', handleAnswer);
-            gameWs.off('turn_ended', handleTurnEnd);
+            gameWs.off(MESSAGE_TYPES.USER_JOINED, handleUserJoined);
+            gameWs.off(MESSAGE_TYPES.USER_LEFT, handleUserLeft);
+            gameWs.off(MESSAGE_TYPES.TYPING, handleTyping);
+            gameWs.off(MESSAGE_TYPES.ANSWER, handleAnswer);
+            gameWs.off(MESSAGE_TYPES.TURN_ENDED, handleTurnEnd);
+            gameWs.off(MESSAGE_TYPES.NEXT_TURN, handleNextTurn);
+            gameWs.off(MESSAGE_TYPES.GAME_OVER, handleGameOver);
         };
     }, [dispatch]);
 

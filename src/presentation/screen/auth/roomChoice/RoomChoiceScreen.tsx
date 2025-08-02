@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import gameWs from '@/service/GameWebsocketService';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { WEBSOCKET_URL } from '@env';
+import { MESSAGE_TYPES } from '@/store/types/websocket';
 
 const RoomChoiceScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -46,14 +47,14 @@ const RoomChoiceScreen = () => {
             showErrorMessage('Lost connection to game server. Please check your internet connection.');
         };
 
-        gameWs.on('connected', handleConnected);
-        gameWs.on('disconnected', handleDisconnected);
-        gameWs.on('error', handleError);
+        gameWs.on(MESSAGE_TYPES.CONNECTED, handleConnected);
+        gameWs.on(MESSAGE_TYPES.DISCONNECTED, handleDisconnected);
+        gameWs.on(MESSAGE_TYPES.ERROR, handleError);
 
         return () => {
-            gameWs.off('connected', handleConnected);
-            gameWs.off('disconnected', handleDisconnected);
-            gameWs.off('error', handleError);
+            gameWs.off(MESSAGE_TYPES.CONNECTED, handleConnected);
+            gameWs.off(MESSAGE_TYPES.DISCONNECTED, handleDisconnected);
+            gameWs.off(MESSAGE_TYPES.ERROR, handleError);
         };
     }, []);
 
