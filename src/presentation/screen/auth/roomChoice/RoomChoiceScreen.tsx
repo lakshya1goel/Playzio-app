@@ -8,8 +8,9 @@ import playzioLogo from '@assets/icons/playzio_logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import gameWs from '@/service/GameWebsocketService';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
-import { WEBSOCKET_URL } from '@env';
+import { CHAT_WEBSOCKET_URL, WEBSOCKET_URL } from '@env';
 import { MESSAGE_TYPES } from '@/store/types/websocket';
+import chatWs from '@/service/ChatWebsocketService';
 
 const RoomChoiceScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -20,6 +21,7 @@ const RoomChoiceScreen = () => {
             setIsConnecting(true);
             try {
                 await gameWs.connect(WEBSOCKET_URL);
+                await chatWs.connect(CHAT_WEBSOCKET_URL);
                 console.log('WebSocket connected successfully on RoomChoiceScreen');
             } catch (error) {
                 console.error('Failed to connect WebSocket:', error);

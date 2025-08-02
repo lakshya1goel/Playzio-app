@@ -86,7 +86,7 @@ class ChatWebSocketService extends EventEmitter {
         } else {
             console.log('WebSocket not open. Cannot leave group.');
         }
-    }
+    };
 
     sendMessage = (content: string) => {
         if (this.socket?.readyState === WebSocket.OPEN) {
@@ -99,7 +99,15 @@ class ChatWebSocketService extends EventEmitter {
         } else {
             console.log('WebSocket not open. Cannot send message.');
         }
-    }
+    };
+
+    setMessageListener = (listener: ((message: any) => void) | null) => {
+        this.messageListener = listener;
+    };
+
+    disconnect = () => {
+        this.socket?.close();
+    };
 }
 
 const chatWs = new ChatWebSocketService();

@@ -12,6 +12,7 @@ import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { getRooms, joinRoom, resetRoomState } from '@/store/slices/roomSlice';
 import gameWs from '@/service/GameWebsocketService';
 import { setPlayers } from '@/store/slices/gameSlice';
+import chatWs from '@/service/ChatWebsocketService';
 
 const JoinRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -28,6 +29,7 @@ const JoinRoomScreen = () => {
     useEffect(() => {
         if (success) {
             gameWs.joinRoom(room?.ID || 0);
+            chatWs.joinRoom(room?.ID || 0);
             console.log("room?.members", room?.members);
             dispatch(setPlayers((room?.members.slice(0, room?.members.length - 1) || []).map(member => ({
                 ...member,

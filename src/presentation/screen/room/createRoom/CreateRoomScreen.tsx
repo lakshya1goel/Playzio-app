@@ -11,6 +11,7 @@ import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { createRoom, resetRoomState } from '@/store/slices/roomSlice';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import gameWs from '@/service/GameWebsocketService';
+import chatWs from '@/service/ChatWebsocketService';
 
 const CreateRoomScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -28,6 +29,7 @@ const CreateRoomScreen = () => {
     useEffect(() => {
         if (success) {
             gameWs.joinRoom(room?.ID || 0);
+            chatWs.joinRoom(room?.ID || 0);
             navigation.navigate('Game');
             dispatch(resetRoomState());
         }
