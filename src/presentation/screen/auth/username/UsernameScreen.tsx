@@ -17,7 +17,7 @@ const UsernameScreen = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
     const [name, setName] = useState('');
-    const { loading, error, isLoggedIn, token } = useSelector((state: RootState) => state.auth);
+    const { loading, error, isLoggedIn, token, user_id } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         if (error) {
@@ -38,7 +38,8 @@ const UsernameScreen = () => {
                         refreshToken: token || '',
                         accessExpTime: accessExpTime.getTime(),
                         refreshExpTime: refreshExpTime.getTime(),
-                        userType: 'guest'
+                        userType: 'guest',
+                        userID: user_id || 0,
                     });
                     setName('');
                     navigation.replace('RoomChoice');

@@ -42,7 +42,8 @@ const SplashScreen = () => {
                     refreshToken: tokens.refreshToken,
                     accessExpTime: newAccessExpTime.getTime(),
                     refreshExpTime: tokens.refreshExpTime,
-                    userType: tokens.userType
+                    userType: tokens.userType,
+                    userID: tokens.userID
                   });
                   navigation.replace('RoomChoice');
                 } else {

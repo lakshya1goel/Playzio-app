@@ -21,6 +21,8 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@type';
 import { MESSAGE_TYPES } from '@/store/types/websocket';
+import { Member } from '@/store/types/room';
+import { addMemberToRoom } from '@/store/slices/roomSlice';
 
 const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
@@ -93,6 +95,7 @@ const CenterCircle = ({char_set}: {char_set: string}) => (
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
+    const { room } = useSelector((state: RootState) => state.room);
     const [gameOverModalVisible, setGameOverModalVisible] = useState(false);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [winnerName, setWinnerName] = useState('');
@@ -101,6 +104,29 @@ const GameComponent = () => {
         const handleUserJoined = (message: any) => {
             console.log('User joined:', message);
             dispatch(handleUserJoinedMessage(message.payload));
+
+            if (message.payload && room) {
+                const newMember: Member = {
+                    ID: Date.now(),
+                    room_id: room.ID,
+                    user_id: message.payload.user_id,
+                    user_name: message.payload.user_name,
+                    user: {
+                        id: message.payload.user_id,
+                        name: message.payload.user_name,
+                        email: '',
+                        profile_pic: '',
+                        access_token: '',
+                        access_token_exp: 0,
+                        refresh_token: '',
+                        refresh_token_exp: 0,
+                    },
+                    guest_id: '',
+                    guest_name: '',
+                    is_creator: false,
+                };
+                dispatch(addMemberToRoom(newMember));
+            }
         };
 
         const handleUserLeft = (message: any) => {

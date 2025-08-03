@@ -16,6 +16,7 @@ const ChatComponent = () => {
     const [messages, setMessages] = useState<Message[]>([]);
 
     const isMyTurn = user_id === current_turn;
+    console.log("isMyTurn, user_id, current_turn", isMyTurn, user_id, current_turn);
 
     const handleSendMessage = () => {
         if (message.trim().length > 0 && !isMyTurn) {
@@ -58,7 +59,6 @@ const ChatComponent = () => {
                     }
                 }}
                 returnKeyType="send"
-                editable={isMyTurn}
             />
             <View style={chatComponentStyles.innerContainer}>
                 <FlatList

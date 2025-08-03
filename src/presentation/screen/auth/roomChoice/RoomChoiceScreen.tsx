@@ -11,10 +11,25 @@ import showErrorMessage from '@/presentation/component/ErrorDialog';
 import { CHAT_WEBSOCKET_URL, WEBSOCKET_URL } from '@env';
 import { MESSAGE_TYPES } from '@/store/types/websocket';
 import chatWs from '@/service/ChatWebsocketService';
+import AuthService from '@/service/AuthService';
+import { setUserId } from '@/store/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
 
 const RoomChoiceScreen = () => {
+    const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [isConnecting, setIsConnecting] = useState(false);
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const tokens = await AuthService.getToken();
+            if (tokens && tokens.userID) {
+                dispatch(setUserId(tokens.userID));
+            }
+        };
+        fetchUserId();
+    }, []);
 
     useEffect(() => {
         const initWebSocket = async () => {

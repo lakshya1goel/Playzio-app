@@ -31,7 +31,6 @@ const CreateRoomScreen = () => {
             gameWs.joinRoom(room?.ID || 0);
             chatWs.joinRoom(room?.ID || 0);
             navigation.navigate('Game');
-            dispatch(resetRoomState());
         }
     }, [success]);
 
