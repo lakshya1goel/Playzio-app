@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
 import { chatComponentStyles } from './ChatComponent.styles';
@@ -18,20 +18,32 @@ const ChatComponent = () => {
     const isMyTurn = user_id === current_turn;
     console.log("isMyTurn, user_id, current_turn", isMyTurn, user_id, current_turn);
 
-    const handleSendMessage = () => {
-        if (message.trim().length > 0 && !isMyTurn) {
-            const tempMessage = {
+    useEffect(() => {
+        const handleIncomingMessage = (data: any) => {            
+            const newMessage = {
                 ID: Date.now().toString(),
                 CreatedAt: new Date().toISOString(),
                 UpdatedAt: new Date().toISOString(),
                 DeletedAt: null,
                 type: CHAT_MESSAGE_TYPES.CHAT_CONTENT,
-                body: message,
-                sender: user_id,
+                body: data.body,
+                sender: data.sender,
                 room_id: room?.ID,
             };
-            setMessages([...messages, tempMessage as Message]);
-            chatWs.sendMessage(JSON.stringify(tempMessage));
+            
+            setMessages(prev => [...prev, newMessage as Message]);
+        };
+
+        chatWs.setMessageListener(handleIncomingMessage);
+
+        return () => {
+            chatWs.setMessageListener(null);
+        };
+    }, [room?.ID]);
+
+    const handleSendMessage = () => {
+        if (message.trim().length > 0 && !isMyTurn) {
+            chatWs.sendMessage(message);
             setMessage('');
         }
     };

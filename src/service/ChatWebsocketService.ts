@@ -1,8 +1,7 @@
-import EventEmitter from 'eventemitter3';
 import AuthService from './AuthService';
 import { CHAT_MESSAGE_TYPES } from '@/store/types/websocket';
 
-class ChatWebSocketService extends EventEmitter {
+class ChatWebSocketService {
     private socket: WebSocket | null = null;
     private roomId: number | null = null;
     private messageListener: ((message: any) => void) | null = null;
