@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
 import { AppState } from 'react-native';
 import gameWs from '@/service/GameWebsocketService';
+import chatWs from '@/service/ChatWebsocketService';
 
 const App = () => {
   useEffect(() => {
@@ -16,6 +17,7 @@ const App = () => {
     return () => {
         subscription?.remove();
         gameWs.disconnect();
+        chatWs.disconnect();
     };
   }, []);
   return <AppNavigator />;

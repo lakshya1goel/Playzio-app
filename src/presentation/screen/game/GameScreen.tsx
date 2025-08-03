@@ -9,6 +9,7 @@ import { leaveRoom, resetRoomState } from '@/store/slices/roomSlice';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
 import GameTimerComponent from '@/presentation/component/gameComponent/GameTimerComponent';
 import gameWs from '@/service/GameWebsocketService';
+import chatWs from '@/service/ChatWebsocketService';
 
 const GameScreen = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,7 @@ const GameScreen = () => {
     useEffect(() => {
         if (leaveRoomSuccess) {
             gameWs.leaveRoom();
+            chatWs.leaveRoom();
             dispatch(resetRoomState());
         }
     }, [leaveRoomSuccess, dispatch]);

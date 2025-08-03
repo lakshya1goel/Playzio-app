@@ -19,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const LoginScreen = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch<AppDispatch>();
-    const { loading, error, isLoggedIn, access_token, refresh_token } = useSelector((state: RootState) => state.auth);
+    const { loading, error, isLoggedIn, access_token, refresh_token, user_id } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         if (error) {
@@ -49,7 +49,8 @@ const LoginScreen = () => {
                         refreshToken: refresh_token || '',
                         accessExpTime: accessExpTime.getTime(),
                         refreshExpTime: refreshExpTime.getTime(),
-                        userType: 'google'
+                        userType: 'google',
+                        userID: user_id || 0
                     });
                     navigation.replace('RoomChoice');
                 } catch (error) {

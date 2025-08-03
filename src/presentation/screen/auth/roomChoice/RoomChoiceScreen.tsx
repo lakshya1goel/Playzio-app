@@ -8,18 +8,35 @@ import playzioLogo from '@assets/icons/playzio_logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import gameWs from '@/service/GameWebsocketService';
 import showErrorMessage from '@/presentation/component/ErrorDialog';
-import { WEBSOCKET_URL } from '@env';
+import { CHAT_WEBSOCKET_URL, WEBSOCKET_URL } from '@env';
 import { MESSAGE_TYPES } from '@/store/types/websocket';
+import chatWs from '@/service/ChatWebsocketService';
+import AuthService from '@/service/AuthService';
+import { setUserId } from '@/store/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
 
 const RoomChoiceScreen = () => {
+    const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [isConnecting, setIsConnecting] = useState(false);
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const tokens = await AuthService.getToken();
+            if (tokens && tokens.userID) {
+                dispatch(setUserId(tokens.userID));
+            }
+        };
+        fetchUserId();
+    }, []);
 
     useEffect(() => {
         const initWebSocket = async () => {
             setIsConnecting(true);
             try {
                 await gameWs.connect(WEBSOCKET_URL);
+                await chatWs.connect(CHAT_WEBSOCKET_URL);
                 console.log('WebSocket connected successfully on RoomChoiceScreen');
             } catch (error) {
                 console.error('Failed to connect WebSocket:', error);

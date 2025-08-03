@@ -114,6 +114,18 @@ export const roomSlice = createSlice({
             state.fetchRoomsSuccess = initialState.fetchRoomsSuccess;
             state.fetchRoomsLoading = initialState.fetchRoomsLoading;
             state.fetchRoomsError = initialState.fetchRoomsError;
+        },
+        addMemberToRoom: (state, action) => {
+            if (state.room) {
+                const existingMemberIndex = state.room.members.findIndex(
+                    member => member.user_id === action.payload.user_id
+                );
+                if (existingMemberIndex === -1) {
+                    state.room.members.push(action.payload);
+                } else {
+                    state.room.members[existingMemberIndex] = action.payload;
+                }
+            }
         }
     },
     extraReducers: (builder) => {
@@ -158,4 +170,4 @@ export const roomSlice = createSlice({
 });
 
 export default roomSlice.reducer;
-export const { resetRoomState } = roomSlice.actions;
+export const { resetRoomState, addMemberToRoom } = roomSlice.actions;
