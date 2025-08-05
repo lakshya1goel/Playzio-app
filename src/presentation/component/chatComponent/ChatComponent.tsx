@@ -48,6 +48,34 @@ const ChatComponent = () => {
         }
     };
 
+    const renderMember = ({ item, index }: { item: any; index: number }) => {
+        const isCurrentTurn = current_turn === item.user_id;
+        
+        return (
+            <View style={isCurrentTurn ? chatComponentStyles.itemContainerCurrentTurn : chatComponentStyles.itemContainer}>
+                <Text style={isCurrentTurn ? chatComponentStyles.itemTextCurrentTurn : chatComponentStyles.itemText}>
+                    {item.user_name}
+                </Text>
+                {isCurrentTurn && (
+                    <Text style={chatComponentStyles.turnIndicator}>🔥 TURN</Text>
+                )}
+            </View>
+        );
+    };
+
+    const renderChatMessage = ({ item, index }: { item: Message; index: number }) => {
+        const isEven = index % 2 === 0;
+        
+        return (
+            <View style={[
+                chatComponentStyles.chatMessageContainer,
+                isEven ? chatComponentStyles.chatMessageEven : chatComponentStyles.chatMessageOdd
+            ]}>
+                <Text style={chatComponentStyles.chatText}>{item.body}</Text>
+            </View>
+        );
+    };
+
     return (
         <View style={chatComponentStyles.outerContainer}>
             <TextInput
@@ -73,24 +101,23 @@ const ChatComponent = () => {
                 returnKeyType="send"
             />
             <View style={chatComponentStyles.innerContainer}>
-                <FlatList
-                    data={room?.members}
-                    renderItem={({ item }) => (
-                        <View style={chatComponentStyles.itemContainer}>
-                            <Text style={chatComponentStyles.itemText}>{item.user_name}</Text>
-                        </View>
-                    )}
-                    keyExtractor={(item) => item.ID.toString()}
-                    showsVerticalScrollIndicator={false}
-                />
+                <View style={chatComponentStyles.membersContainer}>
+                    <FlatList
+                        style={chatComponentStyles.membersListContainer}
+                        data={room?.members}
+                        renderItem={renderMember}
+                        keyExtractor={(item) => item.ID.toString()}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
+                    />
+                </View>
                 <View style={chatComponentStyles.chatContainer}>
                     <FlatList
                         data={messages}
-                        renderItem={({ item }) => (
-                            <Text style={chatComponentStyles.chatText}>{item.body}</Text>
-                        )}
+                        renderItem={renderChatMessage}
                         keyExtractor={(item) => item.ID}
                         showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
                     />
                 </View>
             </View>
