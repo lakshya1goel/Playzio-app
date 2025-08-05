@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Image, Text, Modal, TouchableOpacity, Animated } from 'react-native';
+import { View, Image, Text, Modal, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import player1 from '@assets/images/player1.png';
 import player2 from '@assets/images/player2.png';
 import player3 from '@assets/images/player3.png';
@@ -28,6 +28,8 @@ const defaultPlayerImages = [
     player1, player2, player3, player4, player5,
     player6, player7, player8, player9, player10
 ];
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const PlayerCircle = ({ 
     player, 
@@ -145,6 +147,12 @@ const PlayerCircle = ({
         }
     }, [player.lives]);
 
+    // Calculate responsive width for containers
+    const maxContainerWidth = Math.min(screenWidth * 0.25, 100);
+    const playerNameLength = player.user_name.length;
+    const turnIndicatorWidth = Math.max(maxContainerWidth * 0.8, 70);
+    const typingContainerWidth = Math.max(maxContainerWidth, Math.min(typing_text.length * 8, maxContainerWidth));
+
     return (
         <Animated.View
             key={player.user_id}
@@ -175,18 +183,42 @@ const PlayerCircle = ({
                 />
             )}
 
-            {/* Turn indicator */}
+            {/* Turn indicator - responsive */}
             {isCurrentTurn && (
-                <View style={gameComponentStyles.turnIndicator}>
-                    <Text style={gameComponentStyles.turnIndicatorText}>YOUR TURN</Text>
+                <View style={[
+                    gameComponentStyles.turnIndicator,
+                    { 
+                        width: turnIndicatorWidth,
+                        maxWidth: maxContainerWidth,
+                        left: -(turnIndicatorWidth - PLAYER_SIZE) / 2
+                    }
+                ]}>
+                    <Text 
+                        style={gameComponentStyles.turnIndicatorText}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                    >
+                        YOUR TURN
+                    </Text>
                 </View>
             )}
 
-            {/* Typing indicator */}
+            {/* Typing indicator - responsive */}
             {isCurrentTurn && typing_text && (
-                <View style={gameComponentStyles.typingContainer}>
-                    <Text style={gameComponentStyles.typingText}>
-                        {typing_text.length > 15 ? typing_text.substring(0, 15) + '...' : typing_text}
+                <View style={[
+                    gameComponentStyles.typingContainer,
+                    { 
+                        width: typingContainerWidth,
+                        maxWidth: maxContainerWidth,
+                        left: -(typingContainerWidth - PLAYER_SIZE) / 2
+                    }
+                ]}>
+                    <Text 
+                        style={gameComponentStyles.typingText}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                    >
+                        {typing_text.length > 12 ? typing_text.substring(0, 12) + '...' : typing_text}
                     </Text>
                 </View>
             )}
@@ -198,8 +230,9 @@ const PlayerCircle = ({
                 />
             </View>
             
+            {/* Removed fire emoji and kept same font size */}
             <Text style={isCurrentTurn ? gameComponentStyles.playerNameCurrentTurn : gameComponentStyles.playerName}>
-                {player.user_name} {isCurrentTurn ? '🔥' : ''}
+                {player.user_name}
             </Text>
             
             <View style={gameComponentStyles.playerStatusContainer}>
