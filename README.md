@@ -125,22 +125,6 @@ src/
     └── types/           # TypeScript interfaces
 ```
 
-## 🔌 WebSocket Integration
-
-### Game WebSocket
-- **Features**: Turn management, player actions, game state updates
-
-### Chat WebSocket  
-- **Features**: Real-time messaging, typing indicators, user presence
-
-### Message Types
-- `user_joined` - Player joins the room
-- `user_left` - Player leaves the room  
-- `typing` - Live typing updates
-- `answer` - Answer submission
-- `turn_end` - Turn completion
-- `chat-content` - Chat messages
-
 ## 🎮 How to Play
 
 1. **Authentication**: Sign in with Google or play as a guest
@@ -159,22 +143,6 @@ src/
 - `npx react-native run-android` - Run on Android
 - `npx react-native run-ios` - Run on iOS
 
-### Key Components
-
-#### GameComponent
-- Manages game state and player interactions
-- Handles WebSocket events for game updates
-- Provides visual feedback and animations
-
-#### ChatComponent  
-- Real-time messaging functionality
-- User list with online status
-- Typing indicators
-
-#### WebSocket Services
-- `GameWebsocketService`: Game-related real-time communication
-- `ChatWebsocketService`: Chat functionality
-
 ## 🎨 UI/UX Features
 
 - **Circular Player Layout**: Players arranged in a circle around the game board
@@ -191,15 +159,23 @@ src/
 - Input validation and sanitization
 - WebSocket connection management
 
+## 🔗 Backend Repository
+
+The backend server for this React Native app is built with Go and available at:
+**[Playzio Backend](https://github.com/lakshya1goel/Playzio)**
+
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Submit a pull request
 
-## 📞 Support
+## 📞 Support & Contact
+
+**Lakshya Goel**
+- 📧 Email: lakshya1234goel@gmail.com
+- 🐱 GitHub: [@lakshya1goel](https://github.com/lakshya1goel)
 
 For support and questions, please open an issue in the repository.
 
