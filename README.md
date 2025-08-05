@@ -1,97 +1,208 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🎮 Playzio - Real-time Multiplayer Game
 
-# Getting Started
+A React Native multiplayer game application where players compete in real-time typing challenges with live chat functionality.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 📱 Features
 
-## Step 1: Start Metro
+### 🔐 Authentication
+- **Google Sign-in**: Secure authentication using Google OAuth
+- **Guest Mode**: Play without registration using a custom username
+- **Token Management**: Automatic token refresh and secure storage
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### 🏠 Room Management
+- **Create Rooms**: Set up public or private game rooms
+- **Join Rooms**: Enter rooms using room codes or browse available public rooms
+- **Real-time Updates**: Live player count and room status updates
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 🎯 Game Features
+- **Turn-based Gameplay**: Players take turns in a circular formation
+- **Lives System**: Each player starts with 3 lives
+- **Real-time Typing**: Live typing indicators show what other players are typing
+- **Answer Feedback**: Visual feedback for correct/incorrect answers
+- **Timer Component**: Countdown timer for each turn
+- **Animated UI**: Smooth animations for turn changes, life decreases, and feedback
 
-```sh
-# Using npm
-npm start
+### 💬 Chat System
+- **Real-time Chat**: WebSocket-powered chat during gameplay
 
-# OR using Yarn
-yarn start
+### 🎨 Visual Features
+- **Player Avatars**: Unique player images arranged in a circle
+- **Current Turn Indicator**: Golden border and animations for active player
+- **Life Indicators**: Visual representation of remaining lives
+- **Responsive Design**: Optimized for different screen sizes
+- **Answer Feedback**: "GREAT!" and "OOPS!" notifications for answers
+
+## 🛠️ Tech Stack
+
+- **React Native** 0.80.0
+- **TypeScript** 5.0.4
+- **Redux Toolkit** for state management
+- **React Navigation** for routing
+- **WebSocket** for real-time communication
+- **Google Sign-in** for authentication
+- **Axios** for HTTP requests
+- **React Native Reanimated** for animations
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js >= 18
+- React Native development environment
+- Android Studio (for Android)
+- Xcode (for iOS)
+
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd playzio
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Environment Setup**
+   Create a `.env` file in the root directory:
+   ```env
+   # API Base URL
+   BASE_URL=your_base_url
+   
+   # WebSocket URLs
+   WEBSOCKET_URL=your_game_ws_server_url
+   CHAT_WEBSOCKET_URL=your_chat_ws_server_url
+   
+   # Google OAuth Client ID
+   WEBCLIENT_ID=your_google_oauth_client_id
+   ```
+   
+   **Important:** Replace the following with your actual values:
+   - `your_google_oauth_client_id` - Your Google OAuth client ID from Google Cloud Console
+
+4. **iOS Setup** (iOS only)
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+
+5. **Run the application**
+   ```bash
+   # Start Metro bundler first
+   npx react-native start
+   
+   # Then in a new terminal, run the app
+   # For Android
+   npx react-native run-android
+   
+   # For iOS
+   npx react-native run-ios
+   ```
+
+## 🏗️ Project Structure
+
+```
+src/
+├── navigation/           # Navigation configuration
+├── presentation/
+│   ├── component/       # Reusable components
+│   │   ├── chatComponent/      # Chat functionality
+│   │   ├── gameComponent/      # Game board and logic
+│   │   └── BackgroundWrapper.tsx
+│   └── screen/          # Screen components
+│       ├── auth/        # Authentication screens
+│       ├── room/        # Room management screens
+│       └── game/        # Game screen
+├── service/             # API and WebSocket services
+│   ├── ApiService.ts
+│   ├── AuthService.ts
+│   ├── GameWebsocketService.ts
+│   └── ChatWebsocketService.ts
+└── store/               # Redux store configuration
+    ├── slices/          # Redux slices
+    └── types/           # TypeScript interfaces
 ```
 
-## Step 2: Build and run your app
+## 🔌 WebSocket Integration
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### Game WebSocket
+- **Features**: Turn management, player actions, game state updates
 
-### Android
+### Chat WebSocket  
+- **Features**: Real-time messaging, typing indicators, user presence
 
-```sh
-# Using npm
-npm run android
+### Message Types
+- `user_joined` - Player joins the room
+- `user_left` - Player leaves the room  
+- `typing` - Live typing updates
+- `answer` - Answer submission
+- `turn_end` - Turn completion
+- `chat-content` - Chat messages
 
-# OR using Yarn
-yarn android
-```
+## 🎮 How to Play
 
-### iOS
+1. **Authentication**: Sign in with Google or play as a guest
+2. **Room Selection**: Create a new room or join an existing one
+3. **Gameplay**: 
+   - Players take turns in circular order
+   - Type answers within the time limit
+   - Lose a life for incorrect answers
+   - Last player standing wins!
+4. **Chat**: Communicate with other players during the game
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## 🔧 Development
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### Available Scripts
+- `npx react-native start` - Start Metro bundler
+- `npx react-native run-android` - Run on Android
+- `npx react-native run-ios` - Run on iOS
 
-```sh
-bundle install
-```
+### Key Components
 
-Then, and every time you update your native dependencies, run:
+#### GameComponent
+- Manages game state and player interactions
+- Handles WebSocket events for game updates
+- Provides visual feedback and animations
 
-```sh
-bundle exec pod install
-```
+#### ChatComponent  
+- Real-time messaging functionality
+- User list with online status
+- Typing indicators
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+#### WebSocket Services
+- `GameWebsocketService`: Game-related real-time communication
+- `ChatWebsocketService`: Chat functionality
 
-```sh
-# Using npm
-npm run ios
+## 🎨 UI/UX Features
 
-# OR using Yarn
-yarn ios
-```
+- **Circular Player Layout**: Players arranged in a circle around the game board
+- **Turn Animations**: Smooth transitions between player turns
+- **Life Decrease Animation**: Visual feedback when players lose lives
+- **Answer Feedback**: Immediate visual confirmation of correct/incorrect answers
+- **Responsive Chat**: Alternating message colors and member list
+- **Loading States**: Smooth loading indicators throughout the app
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 🔒 Security
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+- Secure token storage using AsyncStorage
+- Automatic token refresh
+- Input validation and sanitization
+- WebSocket connection management
 
-## Step 3: Modify your app
+## 🤝 Contributing
 
-Now that you have successfully run the app, let's make changes!
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## 📞 Support
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+For support and questions, please open an issue in the repository.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+---
 
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+**Happy Gaming! 🎮**
