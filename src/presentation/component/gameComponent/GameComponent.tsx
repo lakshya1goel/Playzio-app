@@ -147,7 +147,6 @@ const PlayerCircle = ({
         }
     }, [player.lives]);
 
-    // Calculate responsive width for containers
     const maxContainerWidth = Math.min(screenWidth * 0.25, 100);
     const playerNameLength = player.user_name.length;
     const turnIndicatorWidth = Math.max(maxContainerWidth * 0.8, 70);
@@ -171,7 +170,6 @@ const PlayerCircle = ({
                 },
             ]}
         >
-            {/* Glow effect for current turn */}
             {isCurrentTurn && (
                 <Animated.View
                     style={[
@@ -183,7 +181,6 @@ const PlayerCircle = ({
                 />
             )}
 
-            {/* Turn indicator - responsive */}
             {isCurrentTurn && (
                 <View style={[
                     gameComponentStyles.turnIndicator,
@@ -203,7 +200,6 @@ const PlayerCircle = ({
                 </View>
             )}
 
-            {/* Typing indicator - responsive */}
             {isCurrentTurn && typing_text && (
                 <View style={[
                     gameComponentStyles.typingContainer,
@@ -230,7 +226,6 @@ const PlayerCircle = ({
                 />
             </View>
             
-            {/* Removed fire emoji and kept same font size */}
             <Text style={isCurrentTurn ? gameComponentStyles.playerNameCurrentTurn : gameComponentStyles.playerName}>
                 {player.user_name}
             </Text>
@@ -290,12 +285,110 @@ const CenterCircle = ({ char_set }: { char_set: string }) => {
     );
 };
 
+const AnswerFeedbackNotification = ({ 
+    visible, 
+    isCorrect, 
+    onHide 
+}: { 
+    visible: boolean, 
+    isCorrect: boolean, 
+    onHide: () => void 
+}) => {
+    const slideAnim = useRef(new Animated.Value(-100)).current;
+    const scaleAnim = useRef(new Animated.Value(0.8)).current;
+    const bounceAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (visible) {
+            Animated.parallel([
+                Animated.spring(slideAnim, {
+                    toValue: 0,
+                    tension: 100,
+                    friction: 8,
+                    useNativeDriver: true,
+                }),
+                Animated.spring(scaleAnim, {
+                    toValue: 1,
+                    tension: 100,
+                    friction: 8,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+
+            if (isCorrect) {
+                const bounceAnimation = Animated.loop(
+                    Animated.sequence([
+                        Animated.timing(bounceAnim, {
+                            toValue: 1,
+                            duration: 300,
+                            useNativeDriver: true,
+                        }),
+                        Animated.timing(bounceAnim, {
+                            toValue: 0,
+                            duration: 300,
+                            useNativeDriver: true,
+                        }),
+                    ]),
+                    { iterations: 3 }
+                );
+                bounceAnimation.start();
+            }
+
+            const timer = setTimeout(() => {
+                Animated.parallel([
+                    Animated.timing(slideAnim, {
+                        toValue: -100,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(scaleAnim, {
+                        toValue: 0.8,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                ]).start(() => onHide());
+            }, 2500);
+
+            return () => clearTimeout(timer);
+        }
+    }, [visible, isCorrect]);
+
+    if (!visible) return null;
+
+    const bounceScale = bounceAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 1.05],
+    });
+
+    return (
+        <Animated.View
+            style={[
+                gameComponentStyles.answerFeedbackNotification,
+                isCorrect ? gameComponentStyles.correctAnswerNotification : gameComponentStyles.incorrectAnswerNotification,
+                {
+                    transform: [
+                        { translateY: slideAnim },
+                        { scale: scaleAnim },
+                        { scale: isCorrect ? bounceScale : 1 }
+                    ],
+                }
+            ]}
+        >
+            <Text style={gameComponentStyles.answerFeedbackText}>
+                {isCorrect ? 'GREAT!' : 'OOPS!'}
+            </Text>
+        </Animated.View>
+    );
+};
+
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
+    const { players, current_turn, char_set, typing_text, is_answer_correct } = useSelector((state: RootState) => state.game);
     const { room } = useSelector((state: RootState) => state.room);
     const [gameOverModalVisible, setGameOverModalVisible] = useState(false);
     const [playerLives, setPlayerLives] = useState<{ [key: number]: number }>({});
+    const [answerFeedbackVisible, setAnswerFeedbackVisible] = useState(false);
+    const [isCorrectAnswer, setIsCorrectAnswer] = useState(false);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [winnerName, setWinnerName] = useState('');
 
@@ -306,6 +399,13 @@ const GameComponent = () => {
         });
         setPlayerLives(livesMap);
     }, [players]);
+
+    useEffect(() => {
+        if (is_answer_correct !== null) {
+            setIsCorrectAnswer(is_answer_correct);
+            setAnswerFeedbackVisible(true);
+        }
+    }, [is_answer_correct]);
 
     const handleLifeChange = (playerId: number, newLives: number) => {
         setPlayerLives(prev => ({
@@ -458,6 +558,12 @@ const GameComponent = () => {
                             onLifeChange={handleLifeChange}
                         />
                     ))}
+                    
+                    <AnswerFeedbackNotification 
+                        visible={answerFeedbackVisible}
+                        isCorrect={isCorrectAnswer}
+                        onHide={() => setAnswerFeedbackVisible(false)}
+                    />
                 </View>
             </View>
         </>

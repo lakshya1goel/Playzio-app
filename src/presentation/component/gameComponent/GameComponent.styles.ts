@@ -33,7 +33,7 @@ export const gameComponentStyles = StyleSheet.create({
     },
     playerNameCurrentTurn: {
         color: '#FFD700',
-        fontSize: 12, // Same size as regular player name
+        fontSize: 12,
         textAlign: 'center',
         marginBottom: 2,
         marginTop: 0,
@@ -160,5 +160,42 @@ export const gameComponentStyles = StyleSheet.create({
         backgroundColor: 'rgba(255, 215, 0, 0.3)',
         top: -10,
         left: -10,
+    },
+    answerFeedbackNotification: {
+        position: 'absolute',
+        top: -50,
+        left: '50%',
+        marginLeft: -90,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 25,
+        borderWidth: 2,
+        minWidth: 120,
+        maxWidth: 180,
+        zIndex: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 8,
+    },
+    correctAnswerNotification: {
+        backgroundColor: '#22c55e',
+        borderColor: '#16a34a',
+    },
+    incorrectAnswerNotification: {
+        backgroundColor: '#ef4444',
+        borderColor: '#dc2626',
+    },
+
+    answerFeedbackText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#ffffff',
+        textShadowColor: '#000',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
     },
 });
