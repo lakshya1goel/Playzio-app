@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Image, Text, Modal, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Image, Text, Modal, TouchableOpacity, Animated } from 'react-native';
 import player1 from '@assets/images/player1.png';
 import player2 from '@assets/images/player2.png';
 import player3 from '@assets/images/player3.png';
@@ -29,15 +29,124 @@ const defaultPlayerImages = [
     player6, player7, player8, player9, player10
 ];
 
-const PlayerCircle = ({ player, idx, total, isCurrentTurn, typing_text }: { player: GameUser, idx: number, total: number, isCurrentTurn: boolean, typing_text: string }) => {
+const PlayerCircle = ({ 
+    player, 
+    idx, 
+    total, 
+    isCurrentTurn, 
+    typing_text,
+    previousLives,
+    onLifeChange 
+}: { 
+    player: GameUser, 
+    idx: number, 
+    total: number, 
+    isCurrentTurn: boolean, 
+    typing_text: string,
+    previousLives: number,
+    onLifeChange: (playerId: number, newLives: number) => void
+}) => {
     const angle = (2 * Math.PI * idx) / total;
     const x = CENTER_X + RADIUS * Math.cos(angle) - PLAYER_SIZE / 2;
     const y = CENTER_Y + RADIUS * Math.sin(angle) - PLAYER_SIZE / 2;
 
     const image = defaultPlayerImages[idx % defaultPlayerImages.length];
+    
+    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const glowAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+    const lifeShakeAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (isCurrentTurn) {
+            const pulseAnimation = Animated.loop(
+                Animated.sequence([
+                    Animated.timing(pulseAnim, {
+                        toValue: 1.1,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(pulseAnim, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    }),
+                ])
+            );
+            
+            const glowAnimation = Animated.loop(
+                Animated.sequence([
+                    Animated.timing(glowAnim, {
+                        toValue: 1,
+                        duration: 1500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(glowAnim, {
+                        toValue: 0,
+                        duration: 1500,
+                        useNativeDriver: true,
+                    }),
+                ])
+            );
+
+            pulseAnimation.start();
+            glowAnimation.start();
+
+            return () => {
+                pulseAnimation.stop();
+                glowAnimation.stop();
+            };
+        } else {
+            pulseAnim.setValue(1);
+            glowAnim.setValue(0);
+        }
+    }, [isCurrentTurn]);
+
+    useEffect(() => {
+        if (previousLives > (player.lives || 0)) {
+            const shakeAnimation = Animated.sequence([
+                Animated.timing(lifeShakeAnim, {
+                    toValue: 10,
+                    duration: 100,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(lifeShakeAnim, {
+                    toValue: -10,
+                    duration: 100,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(lifeShakeAnim, {
+                    toValue: 10,
+                    duration: 100,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(lifeShakeAnim, {
+                    toValue: 0,
+                    duration: 100,
+                    useNativeDriver: true,
+                }),
+            ]);
+
+            const scaleAnimation = Animated.sequence([
+                Animated.timing(scaleAnim, {
+                    toValue: 0.8,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scaleAnim, {
+                    toValue: 1,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]);
+
+            Animated.parallel([shakeAnimation, scaleAnimation]).start();
+            onLifeChange(player.user_id, player.lives || 0);
+        }
+    }, [player.lives]);
 
     return (
-        <View
+        <Animated.View
             key={player.user_id}
             style={[
                 gameComponentStyles.playerCircleContainer,
@@ -45,60 +154,132 @@ const PlayerCircle = ({ player, idx, total, isCurrentTurn, typing_text }: { play
                     left: x,
                     top: y,
                     width: PLAYER_SIZE,
-                    height: PLAYER_SIZE + 20,
+                    height: PLAYER_SIZE + 40,
+                    transform: [
+                        { scale: pulseAnim },
+                        { translateX: lifeShakeAnim },
+                        { scale: scaleAnim }
+                    ],
                 },
             ]}
         >
+            {/* Glow effect for current turn */}
             {isCurrentTurn && (
-                <View style={{ alignItems: 'center', marginTop: 2 }}>
-                    <Text style={{ color: '#FFD700', fontSize: 13 }}>
-                        {typing_text || ''}
+                <Animated.View
+                    style={[
+                        gameComponentStyles.pulseGlow,
+                        {
+                            opacity: glowAnim,
+                        }
+                    ]}
+                />
+            )}
+
+            {/* Turn indicator */}
+            {isCurrentTurn && (
+                <View style={gameComponentStyles.turnIndicator}>
+                    <Text style={gameComponentStyles.turnIndicatorText}>YOUR TURN</Text>
+                </View>
+            )}
+
+            {/* Typing indicator */}
+            {isCurrentTurn && typing_text && (
+                <View style={gameComponentStyles.typingContainer}>
+                    <Text style={gameComponentStyles.typingText}>
+                        {typing_text.length > 15 ? typing_text.substring(0, 15) + '...' : typing_text}
                     </Text>
                 </View>
             )}
-            <View style={gameComponentStyles.avatarContainer}>
-                <Image source={image} style={gameComponentStyles.avatar} />
+
+            <View style={isCurrentTurn ? gameComponentStyles.avatarContainerCurrentTurn : gameComponentStyles.avatarContainer}>
+                <Image 
+                    source={image} 
+                    style={isCurrentTurn ? gameComponentStyles.avatarCurrentTurn : gameComponentStyles.avatar} 
+                />
             </View>
-            <Text style={gameComponentStyles.playerName}>
+            
+            <Text style={isCurrentTurn ? gameComponentStyles.playerNameCurrentTurn : gameComponentStyles.playerName}>
                 {player.user_name} {isCurrentTurn ? '🔥' : ''}
             </Text>
+            
             <View style={gameComponentStyles.playerStatusContainer}>
                 {Array.from({ length: player.lives || 0 }).map((_, i) => (
                     <Text key={i} style={gameComponentStyles.playerStatusText}>❤️</Text>
                 ))}
             </View>
-        </View>
+        </Animated.View>
     );
 };
 
-const CenterCircle = ({char_set}: {char_set: string}) => (
-    <View
-        style={[
-            gameComponentStyles.centerCircleContainer,
-            {
-                left: CENTER_X - CENTER_SIZE / 2,
-                top: CENTER_Y - CENTER_SIZE / 2,
-                width: CENTER_SIZE,
-                height: CENTER_SIZE,
-            },
-        ]}
-    >
-        <Image
-            source={bomb}
-            style={gameComponentStyles.centerCircleImage}
-            resizeMode="cover"
-        />
-        <Text style={gameComponentStyles.centerCircleText}>{char_set}</Text>
-    </View>
-);
+const CenterCircle = ({ char_set }: { char_set: string }) => {
+    const rotateAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        const rotateAnimation = Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: 10000,
+                useNativeDriver: true,
+            })
+        );
+        rotateAnimation.start();
+
+        return () => rotateAnimation.stop();
+    }, []);
+
+    const rotate = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg'],
+    });
+
+    return (
+        <View
+            style={[
+                gameComponentStyles.centerCircleContainer,
+                {
+                    left: CENTER_X - CENTER_SIZE / 2,
+                    top: CENTER_Y - CENTER_SIZE / 2,
+                    width: CENTER_SIZE,
+                    height: CENTER_SIZE,
+                },
+            ]}
+        >
+            <Animated.Image
+                source={bomb}
+                style={[
+                    gameComponentStyles.centerCircleImage,
+                    { transform: [{ rotate }] }
+                ]}
+                resizeMode="cover"
+            />
+            <Text style={gameComponentStyles.centerCircleText}>{char_set}</Text>
+        </View>
+    );
+};
 
 const GameComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { players, current_turn, char_set, typing_text } = useSelector((state: RootState) => state.game);
     const { room } = useSelector((state: RootState) => state.room);
     const [gameOverModalVisible, setGameOverModalVisible] = useState(false);
+    const [playerLives, setPlayerLives] = useState<{ [key: number]: number }>({});
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [winnerName, setWinnerName] = useState('');
+
+    useEffect(() => {
+        const livesMap: { [key: number]: number } = {};
+        players.forEach(player => {
+            livesMap[player.user_id] = player.lives || 0;
+        });
+        setPlayerLives(livesMap);
+    }, [players]);
+
+    const handleLifeChange = (playerId: number, newLives: number) => {
+        setPlayerLives(prev => ({
+            ...prev,
+            [playerId]: newLives
+        }));
+    };
 
     useEffect(() => {
         const handleUserJoined = (message: any) => {
@@ -179,60 +360,70 @@ const GameComponent = () => {
             gameWs.off(MESSAGE_TYPES.NEXT_TURN, handleNextTurn);
             gameWs.off(MESSAGE_TYPES.GAME_OVER, handleGameOver);
         };
-    }, [dispatch]);
+    }, [dispatch, players]);
 
     return (
         <>
-        {gameOverModalVisible && (
-            <Modal
-                visible={gameOverModalVisible}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setGameOverModalVisible(false)}
-            >
-                <View style={{
-                    flex: 1,
-                    backgroundColor: 'rgba(0,0,0,0.6)',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
+            {gameOverModalVisible && (
+                <Modal
+                    visible={gameOverModalVisible}
+                    transparent
+                    animationType="fade"
+                    onRequestClose={() => setGameOverModalVisible(false)}
+                >
                     <View style={{
-                        backgroundColor: '#fff',
-                        borderRadius: 12,
-                        padding: 24,
-                        alignItems: 'center',
-                        minWidth: 250
+                        flex: 1,
+                        backgroundColor: 'rgba(0,0,0,0.6)',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}>
-                        <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 12 }}>Game Over</Text>
-                        <Text style={{ fontSize: 18, marginBottom: 24 }}>
-                            Winner: <Text style={{ fontWeight: 'bold', color: '#4A0E72' }}>{winnerName}</Text>
-                        </Text>
-                        <TouchableOpacity
-                            style={{
-                                backgroundColor: '#4A0E72',
-                                paddingVertical: 10,
-                                paddingHorizontal: 32,
-                                borderRadius: 8
-                            }}
-                            onPress={() => {
-                                setGameOverModalVisible(false);
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: 'RoomChoice' }],
-                                });
-                            }}
-                        >
-                            <Text style={{ color: '#fff', fontSize: 16 }}>Home</Text>
-                        </TouchableOpacity>
+                        <View style={{
+                            backgroundColor: '#fff',
+                            borderRadius: 12,
+                            padding: 24,
+                            alignItems: 'center',
+                            minWidth: 250
+                        }}>
+                            <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 12 }}>Game Over</Text>
+                            <Text style={{ fontSize: 18, marginBottom: 24 }}>
+                                Winner: <Text style={{ fontWeight: 'bold', color: '#4A0E72' }}>{winnerName}</Text>
+                            </Text>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: '#4A0E72',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 32,
+                                    borderRadius: 8
+                                }}
+                                onPress={() => {
+                                    setGameOverModalVisible(false);
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'RoomChoice' }],
+                                    });
+                                }}
+                            >
+                                <Text style={{ color: '#fff', fontSize: 16 }}>Home</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </Modal>
-        )}
+                </Modal>
+            )}
+            
             <View style={gameComponentStyles.outerContainer}>
                 <View style={gameComponentStyles.boardContainer}>
                     <CenterCircle char_set={char_set} />
                     {players.map((player, idx) => (
-                        <PlayerCircle key={player.user_id} player={player} idx={idx} total={players.length} isCurrentTurn={current_turn === player.user_id} typing_text={typing_text} />
+                        <PlayerCircle 
+                            key={player.user_id} 
+                            player={player} 
+                            idx={idx} 
+                            total={players.length} 
+                            isCurrentTurn={current_turn === player.user_id} 
+                            typing_text={typing_text}
+                            previousLives={playerLives[player.user_id] || 0}
+                            onLifeChange={handleLifeChange}
+                        />
                     ))}
                 </View>
             </View>
