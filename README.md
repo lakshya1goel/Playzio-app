@@ -4,12 +4,7 @@ A React Native multiplayer game application where players compete in real-time t
 
 ## 🎥 Demo
 
-<video width="100%" controls>
-  <source src="https://github.com/lakshya1goel/Playzio/raw/main/assets/videos/demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
-> Playzio multiplayer game demo - See the real-time gameplay, chat, and animations! 🎮
+https://github.com/user-attachments/assets/6b9b2abc-dfbf-4462-8076-87da260d0186
 
 ## 📱 Features
 
