@@ -2,6 +2,15 @@
 
 A React Native multiplayer game application where players compete in real-time typing challenges with live chat functionality.
 
+## 🎥 Demo
+
+<video width="100%" controls>
+  <source src="https://github.com/lakshya1goel/Playzio/raw/main/assets/videos/demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+> Playzio multiplayer game demo - See the real-time gameplay, chat, and animations! 🎮
+
 ## 📱 Features
 
 ### 🔐 Authentication
